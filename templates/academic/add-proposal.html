@@ -1,0 +1,36 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col"><h3 class="page-title">Propose a Subject</h3></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Name</label>
+            <input class="form-control" type="text" name="name" required>
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <select class="form-control" name="department" required>
+              {% for d in departments %}
+              <option value="{{ d.id }}">{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

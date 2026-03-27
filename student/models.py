@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -20,6 +21,7 @@ class Parent(models.Model):
  
 class Student(models.Model):
    parent = models.OneToOneField(Parent, on_delete=models.CASCADE)
+   user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
    first_name = models.CharField(max_length=100)
    last_name = models.CharField(max_length=100)
    student_id = models.CharField(max_length=20)

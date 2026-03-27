@@ -4,9 +4,61 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 
-from .models import Grade, Exam, Subject, Holiday, Department
+from .models import Grade, Exam, Subject, Holiday, Department, SubjectProposal
 from student.models import Student
 from staff.models import Teacher
+
+# --- GESTION DES DÉPARTEMENTS (DEPARTMENTS) ---
+
+@login_required
+def department_list(request):
+    """Display list of all departments"""
+    departments = Department.objects.all().select_related('head_of_dept')
+    return render(request, 'academic/departments.html', {'departments': departments})
+
+@login_required
+def add_department(request):
+    """Add a new department"""
+    if not request.user.is_admin:
+        return HttpResponseForbidden("Access denied.")
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        head_of_dept_id = request.POST.get('head_of_dept')
+        
+        dept_data = {'name': name}
+        if head_of_dept_id:
+            dept_data['head_of_dept_id'] = head_of_dept_id
+        
+        Department.objects.create(**dept_data)
+        messages.success(request, 'Department created successfully')
+        return redirect('department_list')
+    
+    teachers = Teacher.objects.all()
+    return render(request, 'academic/add-department.html', {'teachers': teachers})
+
+@login_required
+def edit_department(request, dept_id):
+    """Edit department details"""
+    if not request.user.is_admin:
+        return HttpResponseForbidden("Access denied.")
+    
+    department = get_object_or_404(Department, id=dept_id)
+    
+    if request.method == 'POST':
+        department.name = request.POST.get('name')
+        head_of_dept_id = request.POST.get('head_of_dept')
+        if head_of_dept_id:
+            department.head_of_dept_id = head_of_dept_id
+        department.save()
+        messages.success(request, 'Department updated successfully')
+        return redirect('department_list')
+    
+    teachers = Teacher.objects.all()
+    return render(request, 'academic/edit-department.html', {
+        'department': department,
+        'teachers': teachers
+    })
 
 # --- GESTION DES NOTES (GRADES) ---
 
@@ -87,7 +139,7 @@ def subject_list(request):
 
 @login_required
 def add_subject(request):
-    if not request.user.is_admin:
+    if not (request.user.is_admin or request.user.is_teacher):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -139,3 +191,61 @@ def add_holiday(request):
         return redirect('holiday_list')
 
     return render(request, 'academic/add-holiday.html')
+
+@login_required
+def proposal_list(request):
+    if request.user.is_admin or request.user.is_teacher:
+        proposals = SubjectProposal.objects.all().select_related('department', 'proposer')
+    else:
+        proposals = SubjectProposal.objects.filter(proposer=request.user).select_related('department', 'proposer')
+    return render(request, 'academic/proposals.html', {'proposals': proposals})
+
+@login_required
+def add_proposal(request):
+    if not request.user.is_student:
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        dept_id = request.POST.get('department')
+        description = request.POST.get('description', '')
+        dept_obj = get_object_or_404(Department, id=dept_id)
+        SubjectProposal.objects.create(
+            name=name,
+            department=dept_obj,
+            proposer=request.user,
+            description=description
+        )
+        messages.success(request, 'Proposal submitted')
+        return redirect('proposal_list')
+    departments = Department.objects.all()
+    return render(request, 'academic/add-proposal.html', {'departments': departments})
+
+@login_required
+def approve_proposal(request, id):
+    if not (request.user.is_admin or request.user.is_teacher):
+        return HttpResponseForbidden()
+    prop = get_object_or_404(SubjectProposal, id=id)
+    if request.method == 'POST':
+        teacher_id = request.POST.get('teacher')
+        teacher_obj = get_object_or_404(Teacher, id=teacher_id)
+        Subject.objects.create(
+            name=prop.name,
+            department=prop.department,
+            teacher=teacher_obj
+        )
+        prop.status = 'approved'
+        prop.save()
+        messages.success(request, 'Proposal approved')
+        return redirect('proposal_list')
+    teachers = Teacher.objects.all()
+    return render(request, 'academic/approve-proposal.html', {'proposal': prop, 'teachers': teachers})
+
+@login_required
+def reject_proposal(request, id):
+    if not (request.user.is_admin or request.user.is_teacher):
+        return HttpResponseForbidden()
+    prop = get_object_or_404(SubjectProposal, id=id)
+    prop.status = 'rejected'
+    prop.save()
+    messages.success(request, 'Proposal rejected')
+    return redirect('proposal_list')
