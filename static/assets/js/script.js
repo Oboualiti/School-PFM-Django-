@@ -21,25 +21,46 @@ Version      : 1.0
 	
 	function init() {
 		var $this = Sidemenu;
+		
+		// Sidebar menu click handler with improved performance
 		$('#sidebar-menu a').on('click', function(e) {
 			try {
-				if($(this).parent().hasClass('submenu')) {
-					e.preventDefault();
+				var $a = $(this);
+				var $li = $a.parent();
+				var isTopSubmenu = $li.hasClass('submenu');
+				var hasChildMenu = $a.next('ul').length > 0;
+				
+				if (isTopSubmenu && hasChildMenu) {
+					if ($a.attr('href') === '#') {
+						e.preventDefault();
+					}
+					
+					// Use faster CSS transitions instead of slideDown/slideUp
+					if(!$a.hasClass('subdrop')) {
+						$('ul', $a.parents('ul:first')).stop(true, true).fadeOut(200);
+						$('a', $a.parents('ul:first')).removeClass('subdrop');
+						$a.next('ul').stop(true, true).fadeIn(200);
+						$a.addClass('subdrop');
+					} else {
+						$a.removeClass('subdrop');
+						$a.next('ul').stop(true, true).fadeOut(200);
+					}
+					return false;
 				}
-				if(!$(this).hasClass('subdrop')) {
-					$('ul', $(this).parents('ul:first')).slideUp(350);
-					$('a', $(this).parents('ul:first')).removeClass('subdrop');
-					$(this).next('ul').slideDown(350);
-					$(this).addClass('subdrop');
-				} else if($(this).hasClass('subdrop')) {
-					$(this).removeClass('subdrop');
-					$(this).next('ul').slideUp(350);
+				
+				// For actual navigation links, close overlay and reset states
+				if ($a.attr('href') && $a.attr('href') !== '#') {
+					$('.sidebar-overlay').removeClass('opened');
+					$('html').removeClass('menu-opened');
+					$wrapper.removeClass('slide-nav');
 				}
 			} catch (err) {
 				console && console.warn && console.warn('Sidebar click handler error:', err);
 			}
 		});
-		$('#sidebar-menu ul li.submenu a.active').parents('li:last').children('a:first').addClass('active').trigger('click');
+		
+		// Initialize active menu state
+		$('#sidebar-menu ul li.submenu a.active').parents('li:last').children('a:first').addClass('active');
 	}
 	
 	// Sidebar Initiate
@@ -203,6 +224,12 @@ Version      : 1.0
 			}
 		}, 300);
 		return false;
+	});
+    // Global state cleanup on page navigation via internal links
+    $(document).on('click', 'a[href^="/"]', function(){
+		$('.sidebar-overlay').removeClass('opened');
+		$('html').removeClass('menu-opened');
+		$wrapper.removeClass('slide-nav');
 	});
 	$(document).on('mouseover', function(e) {
 		e.stopPropagation();

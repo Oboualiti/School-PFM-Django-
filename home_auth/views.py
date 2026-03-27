@@ -5,10 +5,18 @@ from .models import CustomUser, PasswordResetRequest
 
 def signup_view(request):
     if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        password = request.POST['password']
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
+        confirm = request.POST.get('confirm_password', '')
+        role = request.POST.get('role')
+        if not password or password != confirm:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'authentication/register.html')
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, 'An account with this email already exists.')
+            return render(request, 'authentication/register.html')
 
         user = CustomUser.objects.create_user(
             username=email,
@@ -16,9 +24,15 @@ def signup_view(request):
             first_name=first_name,
             last_name=last_name,
             password=password,
+            
         )
-
-        user.is_student = True
+        if role == 'student':
+            user.is_student = True
+        elif role == 'admin':
+            user.is_admin = True
+            user.is_staff = True
+        elif role == 'teacher':
+            user.is_teacher = True
         user.save()
 
         login(request, user)
