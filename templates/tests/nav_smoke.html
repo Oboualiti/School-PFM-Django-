@@ -1,0 +1,38 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <h3>Navigation Smoke Tests</h3>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </div>
+</div>
+<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.21.0.css">
+<script src="https://code.jquery.com/qunit/qunit-2.21.0.js"></script>
+<script>
+  QUnit.module('Sidebar Navigation');
+  QUnit.test('top-level submenu toggles without blocking', function(assert) {
+    const dash = document.querySelector('#sidebar-menu li.submenu > a');
+    assert.ok(dash, 'dashboard submenu anchor exists');
+    dash.click();
+    assert.ok(dash.classList.contains('subdrop'), 'submenu opened');
+    dash.click();
+    assert.notOk(dash.classList.contains('subdrop'), 'submenu closed');
+  });
+  QUnit.test('nested link click cleans overlay state', function(assert) {
+    const done = assert.async();
+    const overlay = document.querySelector('.sidebar-overlay');
+    overlay.classList.add('opened');
+    document.documentElement.classList.add('menu-opened');
+    document.querySelector('.main-wrapper').classList.add('slide-nav');
+    const link = document.querySelector('#sidebar-menu li.submenu ul li a');
+    link.dispatchEvent(new MouseEvent('click', {bubbles:true}));
+    setTimeout(function(){
+      assert.notOk(overlay.classList.contains('opened'), 'overlay closed');
+      assert.notOk(document.documentElement.classList.contains('menu-opened'), 'menu-opened removed');
+      assert.notOk(document.querySelector('.main-wrapper').classList.contains('slide-nav'), 'slide-nav removed');
+      done();
+    }, 100);
+  });
+</script>
+{% endblock %}

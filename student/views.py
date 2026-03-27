@@ -1,13 +1,15 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib import messages
 from .models import Student, Parent
 from home_auth.decorators import admin_required
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def student_list(request):
- students = Student.objects.all()   # get students from database   
- return render(request, 'students/students.html' , {'students': students})
+    students = Student.objects.all()
+    return render(request, 'students/students.html', {'students': students})
 
 
 
@@ -76,9 +78,12 @@ def add_student(request):
 
     return render(request, 'students/add-student.html')
 
+@login_required
 def edit_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     parent = student.parent
+    if request.user.is_student and student.user_id != request.user.id:
+        return HttpResponseForbidden()
     if request.method == 'POST':
         # Update student fields
         student.first_name = request.POST.get('first_name')
@@ -109,20 +114,33 @@ def edit_student(request, student_id):
         parent.save()
 
         messages.success(request, 'Student updated successfully!')
+        if request.user.is_student:
+            return redirect('my_profile')
         return redirect('student_list')
     return render(request, 'students/edit-student.html', {'student': student})
 
+@login_required
 def view_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
+    if request.user.is_student and student.user_id != request.user.id:
+        return HttpResponseForbidden()
     return render(request, 'students/student-details.html', {'student': student})
 
+@admin_required
 def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     student.delete()
     return redirect('student_list')
 
+@login_required
+def student_dashboard(request):
+    return render(request, 'students/student-dashboard.html')
 
-def student_dashboard(request ):
- return render(request, 'students/student-dashboard.html')
+@login_required
+def my_profile(request):
+    me = Student.objects.filter(user_id=request.user.id).first()
+    if not me:
+        return HttpResponseForbidden()
+    return render(request, 'students/student-details.html', {'student': me})
 
 

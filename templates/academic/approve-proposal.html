@@ -1,0 +1,31 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col"><h3 class="page-title">Approve Proposal</h3></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ proposal.name }}</p>
+        <p><strong>Department:</strong> {{ proposal.department.name }}</p>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Assign Teacher</label>
+            <select class="form-control" name="teacher" required>
+              {% for t in teachers %}
+              <option value="{{ t.id }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class="btn btn-success" type="submit">Approve</button>
+          <a class="btn btn-secondary" href="{% url 'proposal_list' %}">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

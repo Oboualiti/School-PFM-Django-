@@ -33,3 +33,15 @@ class AcademicViewsTest(TestCase):
         resp = self.client.get(reverse('holiday_list'))
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'Holidays')
+
+    def test_add_subject_permissions(self):
+        # Student blocked
+        student = User.objects.create_user(username='s@example.com', email='s@example.com', password='pass', is_student=True)
+        self.client.force_login(student)
+        resp = self.client.get(reverse('add_subject'))
+        self.assertEqual(resp.status_code, 403)
+        # Teacher allowed
+        teacher_user = User.objects.create_user(username='t2@example.com', email='t2@example.com', password='pass', is_teacher=True)
+        self.client.force_login(teacher_user)
+        resp = self.client.get(reverse('add_subject'))
+        self.assertEqual(resp.status_code, 200)
