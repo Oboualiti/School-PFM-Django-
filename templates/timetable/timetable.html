@@ -1,0 +1,39 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col">
+          <h3 class="page-title">Time Table</h3>
+        </div>
+      </div>
+    </div>
+    {% for day, slots in schedule.items %}
+    <div class="card mb-3">
+      <div class="card-header"><strong>{{ day }}</strong></div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead>
+            <tr><th>Subject</th><th>Teacher</th><th>Start</th><th>End</th><th>Classroom</th></tr>
+          </thead>
+          <tbody>
+            {% for slot in slots %}
+            <tr>
+              <td>{{ slot.subject.name }}</td>
+              <td>{{ slot.teacher }}</td>
+              <td>{{ slot.start_time }}</td>
+              <td>{{ slot.end_time }}</td>
+              <td>{{ slot.classroom }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No slots</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

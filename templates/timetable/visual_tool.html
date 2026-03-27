@@ -1,0 +1,72 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col">
+                    <h3 class="page-title">Générateur Visual Timetabling</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Time Table</a></li>
+                        <li class="breadcrumb-item active">Visual Tool</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {% if integration_enabled and external_url %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="vt-fallback" class="alert alert-warning" style="display:none">
+                                Impossible d'afficher l'outil dans un cadre (bloqué par le site distant, CSP, ou le navigateur).
+                                <a id="vt-open" class="btn btn-sm btn-primary ml-2" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet</a>
+                                <button id="vt-retry" class="btn btn-sm btn-outline-secondary ml-1">Réessayer</button>
+                            </div>
+                            <iframe id="vt-frame" src="" width="100%" height="800" frameborder="0" referrerpolicy="no-referrer" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+              (function(){
+                var url = "{{ external_url|escapejs }}";
+                var frame = document.getElementById('vt-frame');
+                var fallback = document.getElementById('vt-fallback');
+                var openBtn = document.getElementById('vt-open');
+                var retryBtn = document.getElementById('vt-retry');
+                openBtn.href = url;
+                var attempts = 0;
+                var delays = [0, 1500, 3000, 5000];
+                function loadWithBackoff(){
+                  var delay = delays[Math.min(attempts, delays.length-1)];
+                  setTimeout(function(){
+                    attempts++;
+                    var bust = (url.indexOf('?')>-1?'&':'?')+'t='+(Date.now());
+                    frame.src = url + bust;
+                  }, delay);
+                }
+                function showFallback(){
+                  fallback.style.display = '';
+                }
+                var loaded = false;
+                frame.addEventListener('load', function(){
+                  loaded = true;
+                });
+                // If no load event in 4s, assume blocked
+                setTimeout(function(){ if(!loaded){ showFallback(); } }, 4000);
+                retryBtn.addEventListener('click', function(e){ e.preventDefault(); loaded=false; loadWithBackoff(); });
+                // Initial try
+                loadWithBackoff();
+              })();
+            </script>
+        {% else %}
+            <div class="alert alert-info">
+                L'intégration Visual Timetabling est désactivée pour cet environnement.
+                <a href="https://www.visual-timetabling.be/" target="_blank" rel="noopener">Ouvrir le site</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
