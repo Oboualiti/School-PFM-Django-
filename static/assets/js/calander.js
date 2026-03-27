@@ -1,27 +1,20 @@
 $(document).ready(function () {
-	$("#calendar-doctor").simpleCalendar({
-		fixedStartDay: 0, // begin weeks by sunday
-		disableEmptyDetails: true,
-		events: [
-			// generate new event after tomorrow for one hour
-			{
-				startDate: new Date(new Date().setHours(new Date().getHours() + 24)).toDateString(),
-				endDate: new Date(new Date().setHours(new Date().getHours() + 25)).toISOString(),
-				summary: 'Conference with teachers'
-			},
-			// generate new event for yesterday at noon
-			{
-				startDate: new Date(new Date().setHours(new Date().getHours() - new Date().getHours() - 12, 0)).toISOString(),
-				endDate: new Date(new Date().setHours(new Date().getHours() - new Date().getHours() - 11)).getTime(),
-				summary: 'Old classes'
-			},
-			// generate new event for the last two days
-			{
-				startDate: new Date(new Date().setHours(new Date().getHours() - 48)).toISOString(),
-				endDate: new Date(new Date().setHours(new Date().getHours() - 24)).getTime(),
-				summary: 'Old Lessons'
-			}
-		],
-
-	});
-});
+  var $cal = $("#calendar-doctor");
+  if ($cal.length === 0 || typeof $.fn.simpleCalendar !== 'function') {
+    return;
+  }
+  function iso(hoursFromNow) {
+    var d = new Date();
+    d.setHours(d.getHours() + hoursFromNow);
+    return d.toISOString();
+  }
+  $cal.simpleCalendar({
+    fixedStartDay: 0,
+    disableEmptyDetails: true,
+    events: [
+      { startDate: iso(24), endDate: iso(25), summary: 'Conference with teachers' },
+      { startDate: iso(-12), endDate: iso(-11), summary: 'Old classes' },
+      { startDate: iso(-48), endDate: iso(-24), summary: 'Old Lessons' }
+    ],
+  });
+}); 

@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'faculty',
     'student',
     'home_auth',
-
+    'academic',
+    'staff',
+    'timetable',
 ]
 
 MIDDLEWARE = [
@@ -121,6 +123,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+VISUAL_TIMETABLING_ENABLED = os.environ.get('VT_ENABLED', 'true').lower() not in ('0', 'false', 'no')
+VISUAL_TIMETABLING_URL = os.environ.get('VT_URL', 'https://www.visual-timetabling.be/')
 
 
 AUTH_USER_MODEL = 'home_auth.CustomUser'

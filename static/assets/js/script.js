@@ -22,17 +22,21 @@ Version      : 1.0
 	function init() {
 		var $this = Sidemenu;
 		$('#sidebar-menu a').on('click', function(e) {
-			if($(this).parent().hasClass('submenu')) {
-				e.preventDefault();
-			}
-			if(!$(this).hasClass('subdrop')) {
-				$('ul', $(this).parents('ul:first')).slideUp(350);
-				$('a', $(this).parents('ul:first')).removeClass('subdrop');
-				$(this).next('ul').slideDown(350);
-				$(this).addClass('subdrop');
-			} else if($(this).hasClass('subdrop')) {
-				$(this).removeClass('subdrop');
-				$(this).next('ul').slideUp(350);
+			try {
+				if($(this).parent().hasClass('submenu')) {
+					e.preventDefault();
+				}
+				if(!$(this).hasClass('subdrop')) {
+					$('ul', $(this).parents('ul:first')).slideUp(350);
+					$('a', $(this).parents('ul:first')).removeClass('subdrop');
+					$(this).next('ul').slideDown(350);
+					$(this).addClass('subdrop');
+				} else if($(this).hasClass('subdrop')) {
+					$(this).removeClass('subdrop');
+					$(this).next('ul').slideUp(350);
+				}
+			} catch (err) {
+				console && console.warn && console.warn('Sidebar click handler error:', err);
 			}
 		});
 		$('#sidebar-menu ul li.submenu a.active').parents('li:last').children('a:first').addClass('active').trigger('click');
@@ -77,11 +81,15 @@ Version      : 1.0
 	
 	// Select 2
 	
-    if ($('.select').length > 0) {
-        $('.select').select2({
-            minimumResultsForSearch: -1,
-            width: '100%'
-        });
+    if ($('.select').length > 0 && $.fn && $.fn.select2) {
+        try {
+            $('.select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        } catch (err) {
+            console && console.warn && console.warn('Select2 init failed:', err);
+        }
     }
 	
 	// Datetimepicker
@@ -187,8 +195,12 @@ Version      : 1.0
 			$('.subdrop + ul').slideUp();
 		}
 		setTimeout(function(){ 
-			mA.redraw();
-			mL.redraw();
+			if (typeof window.mA !== 'undefined' && window.mA && typeof window.mA.redraw === 'function') {
+				window.mA.redraw();
+			}
+			if (typeof window.mL !== 'undefined' && window.mL && typeof window.mL.redraw === 'function') {
+				window.mL.redraw();
+			}
 		}, 300);
 		return false;
 	});

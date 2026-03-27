@@ -12,6 +12,8 @@
       <link rel="stylesheet" href="{%static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
       <link rel="stylesheet" href="{%static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
       <link rel="stylesheet" href="{%static 'assets/plugins/fontawesome/css/all.min.css' %}">
+      <link rel="stylesheet" href="{%static 'assets/plugins/select2/css/select2.min.css' %}">
+      <link rel="stylesheet" href="{%static 'assets/plugins/simple-calendar/simple-calendar.css' %}">
       <link rel="stylesheet" href="{%static 'assets/css/style.css' %}">
    </head>
    <body>
@@ -90,7 +92,7 @@
                      <li class="submenu active">
                         <a href="#"><i class="fas fa-user-graduate"></i> <span> Dashboard</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="{ % url 'dashboard'  %}" class="active">Admin Dashboard</a></li>
+                           <li><a href="{% url 'dashboard' %}" class="active">Admin Dashboard</a></li>
                            <li><a href="teacher-dashboard.html">Teacher Dashboard</a></li>
                            <li><a href="{% url 'student_dashboard' %}">Student Dashboard</a></li>
                         </ul>
@@ -124,9 +126,9 @@
                      <li class="submenu">
                         <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="subjects.html">Subject List</a></li>
-                           <li><a href="add-subject.html">Subject Add</a></li>
-                           <li><a href="edit-subject.html">Subject Edit</a></li>
+                           <li><a href="{% url 'subject_list' %}">Subject List</a></li>
+                           <li><a href="{% url 'add_subject' %}">Subject Add</a></li>
+                           <li><a href="#">Subject Edit</a></li>
                         </ul>
                      </li>
                      <li class="menu-title">
@@ -144,19 +146,19 @@
                         </ul>
                      </li>
                      <li>
-                        <a href="holiday.html"><i class="fas fa-holly-berry"></i> <span>Holiday</span></a>
+                        <a href="{% url 'holiday_list' %}"><i class="fas fa-holly-berry"></i> <span>Holiday</span></a>
                      </li>
                      <li>
                         <a href="fees.html"><i class="fas fa-comment-dollar"></i> <span>Fees</span></a>
                      </li>
                      <li>
-                        <a href="exam.html"><i class="fas fa-clipboard-list"></i> <span>Exam list</span></a>
+                        <a href="{% url 'exam_list' %}"><i class="fas fa-clipboard-list"></i> <span>Exam list</span></a>
                      </li>
                      <li>
                         <a href="event.html"><i class="fas fa-calendar-day"></i> <span>Events</span></a>
                      </li>
                      <li>
-                        <a href="time-table.html"><i class="fas fa-table"></i> <span>Time Table</span></a>
+                        <a href="{% url 'visual_tool' %}"><i class="fas fa-table"></i> <span>Time Table</span></a>
                      </li>
                      <li>
                         <a href="library.html"><i class="fas fa-book"></i> <span>Library</span></a>
@@ -167,9 +169,9 @@
                      <li class="submenu">
                         <a href="#"><i class="fas fa-shield-alt"></i> <span> Authentication </span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="">Login</a></li>
-                           <li><a href="">Register</a></li>
-                           <li><a href="">Forgot Password</a></li>
+                           <li><a href="{% url 'login' %}">Login</a></li>
+                           <li><a href="{% url 'signup' %}">Register</a></li>
+                           <li><a href="{% url 'forgot-password' %}">Forgot Password</a></li>
                            <li><a href="error-404.html">Error Page</a></li>
                         </ul>
                      </li>
@@ -246,9 +248,16 @@
 
       </div>
 
- 
-
-    
+      <script src="{%static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+      <script src="{%static 'assets/js/popper.min.js' %}"></script>
+      <script src="{%static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+      <script src="{%static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+      <script src="{%static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+      <script src="{%static 'assets/plugins/apexchart/apexcharts.min.js' %}"></script>
+      <script src="{%static 'assets/plugins/apexchart/chart-data.js' %}"></script>
+      <script src="{%static 'assets/plugins/simple-calendar/jquery.simple-calendar.js' %}"></script>
+      <script src="{%static 'assets/js/calander.js' %}"></script>
+      <script src="{%static 'assets/js/script.js' %}"></script>
       <script type="text/javascript">
           document.addEventListener('DOMContentLoaded', function() {
               // Select the notification dropdown element

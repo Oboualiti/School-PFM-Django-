@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import Student, Parent
+from home_auth.decorators import admin_required
 
 
 def student_list(request):
@@ -11,7 +12,7 @@ def student_list(request):
 
 
 
-
+@admin_required 
 def add_student(request):
     if request.method == 'POST':
 
@@ -76,13 +77,49 @@ def add_student(request):
     return render(request, 'students/add-student.html')
 
 def edit_student(request, student_id):
- return render(request, 'students/edit-student.html')
+    student = get_object_or_404(Student, student_id=student_id)
+    parent = student.parent
+    if request.method == 'POST':
+        # Update student fields
+        student.first_name = request.POST.get('first_name')
+        student.last_name = request.POST.get('last_name')
+        student.student_id = request.POST.get('student_id')
+        student.gender = request.POST.get('gender')
+        student.date_of_birth = request.POST.get('date_of_birth')
+        student.student_class = request.POST.get('student_class')
+        student.joining_date = request.POST.get('joining_date')
+        student.mobile_number = request.POST.get('mobile_number')
+        student.admission_number = request.POST.get('admission_number')
+        student.section = request.POST.get('section')
+        if request.FILES.get('student_image'):
+            student.student_image = request.FILES.get('student_image')
+        student.save()
+
+        # Update parent fields
+        parent.father_name = request.POST.get('father_name')
+        parent.father_occupation = request.POST.get('father_occupation')
+        parent.father_mobile = request.POST.get('father_mobile')
+        parent.father_email = request.POST.get('father_email')
+        parent.mother_name = request.POST.get('mother_name')
+        parent.mother_occupation = request.POST.get('mother_occupation')
+        parent.mother_mobile = request.POST.get('mother_mobile')
+        parent.mother_email = request.POST.get('mother_email')
+        parent.present_address = request.POST.get('present_address')
+        parent.permanent_address = request.POST.get('permanent_address')
+        parent.save()
+
+        messages.success(request, 'Student updated successfully!')
+        return redirect('student_list')
+    return render(request, 'students/edit-student.html', {'student': student})
 
 def view_student(request, student_id):
- return render(request, 'students/student-details.html')
+    student = get_object_or_404(Student, student_id=student_id)
+    return render(request, 'students/student-details.html', {'student': student})
 
 def delete_student(request, student_id):
- return redirect('student_list')
+    student = get_object_or_404(Student, student_id=student_id)
+    student.delete()
+    return redirect('student_list')
 
 
 def student_dashboard(request ):
