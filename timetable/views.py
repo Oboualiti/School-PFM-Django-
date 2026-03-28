@@ -39,6 +39,7 @@ def timetable_list(request):
     }
 
     return render(request, 'timetable/timetable.html', {'schedule': schedule})
+
 # ADMIN ADD TIMETABLE
 def add_timetable(request):
 
