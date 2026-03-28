@@ -35,15 +35,20 @@ Version      : 1.0
 						e.preventDefault();
 					}
 					
-					// Use faster CSS transitions instead of slideDown/slideUp
+					// Collapse all other open submenus first (accordion behavior)
+					var $otherSubmenus = $('#sidebar-menu ul li.submenu a.subdrop').not($a);
+					if ($otherSubmenus.length > 0) {
+						$otherSubmenus.removeClass('subdrop');
+						$otherSubmenus.next('ul').stop(true, true).slideUp(350);
+					}
+
+					// Toggle current submenu
 					if(!$a.hasClass('subdrop')) {
-						$('ul', $a.parents('ul:first')).stop(true, true).fadeOut(200);
-						$('a', $a.parents('ul:first')).removeClass('subdrop');
-						$a.next('ul').stop(true, true).fadeIn(200);
+						$a.next('ul').stop(true, true).slideDown(350);
 						$a.addClass('subdrop');
 					} else {
 						$a.removeClass('subdrop');
-						$a.next('ul').stop(true, true).fadeOut(200);
+						$a.next('ul').stop(true, true).slideUp(350);
 					}
 					return false;
 				}
@@ -53,10 +58,40 @@ Version      : 1.0
 					$('.sidebar-overlay').removeClass('opened');
 					$('html').removeClass('menu-opened');
 					$wrapper.removeClass('slide-nav');
+					
+					// Reset all submenu states when navigating to a new page
+					$('#sidebar-menu ul li.submenu a.subdrop').removeClass('subdrop');
+					$('#sidebar-menu ul li.submenu ul:visible').stop(true, true).slideUp(350);
 				}
 			} catch (err) {
 				console && console.warn && console.warn('Sidebar click handler error:', err);
 			}
+		});
+		
+		// Additional click handler for main menu items to ensure proper state reset
+		$('#sidebar-menu > ul > li.submenu > a').on('click', function(e) {
+			var $a = $(this);
+			var $li = $a.parent();
+			var hasChildMenu = $a.next('ul').length > 0;
+			
+			if (hasChildMenu && $a.attr('href') === '#') {
+				e.preventDefault();
+				e.stopImmediatePropagation(); // Prevent Bootstrap from handling this event
+				
+				// If clicking a different main menu item, close all other submenus
+				if (!$a.hasClass('subdrop')) {
+					var $otherMainMenus = $('#sidebar-menu > ul > li.submenu > a.subdrop').not($a);
+					if ($otherMainMenus.length > 0) {
+						$otherMainMenus.removeClass('subdrop');
+						$otherMainMenus.next('ul').stop(true, true).slideUp(350);
+					}
+				}
+			}
+		});
+		
+		// Disable Bootstrap's default behavior on sidebar menu items to prevent conflicts
+		$('#sidebar-menu a[href="#"]').on('click', function(e) {
+			e.stopPropagation();
 		});
 		
 		// Initialize active menu state

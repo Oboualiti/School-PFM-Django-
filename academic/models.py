@@ -20,8 +20,11 @@ class Subject(models.Model):
 
 class Exam(models.Model):
     name = models.CharField(max_length=100) # Ex: Contrôle 1
+    description = models.TextField(blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     date = models.DateField()
+    start_datetime = models.DateTimeField(null=True, blank=True)
+    end_datetime = models.DateTimeField(null=True, blank=True)
 
 class Grade(models.Model): # Pour la saisie des résultats
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -32,6 +35,7 @@ class Holiday(models.Model):
     name = models.CharField(max_length=100)
     holiday_date = models.DateField()
     type = models.CharField(max_length=50, choices=[('Public', 'Public'), ('School', 'School')])
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -51,3 +55,8 @@ class SubjectProposal(models.Model):
 
     def __str__(self):
         return self.name
+
+class ExamQuestion(models.Model):
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='questions')
+    text = models.TextField()
+    marks = models.FloatField(null=True, blank=True)
