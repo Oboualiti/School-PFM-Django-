@@ -14,6 +14,8 @@ urlpatterns = [
     # Exam URLs
     path('exams/', views.exam_list, name='exam_list'),
     path('exams/add/', views.add_exam, name='add_exam'),
+    path('exams/teacher/add/', views.add_exam_teacher, name='add_exam_teacher'),
+    path('exams/create/', views.create_exam_api, name='create_exam_api'),
     
     # Grade URLs
     path('grades/', views.grade_list, name='grade_list'),
@@ -22,6 +24,7 @@ urlpatterns = [
     # Holiday URLs
     path('holidays/', views.holiday_list, name='holiday_list'),
     path('holidays/add/', views.add_holiday, name='add_holiday'),
+    path('holidays/<int:holiday_id>/delete/', views.delete_holiday, name='delete_holiday'),
     
     # Proposal URLs
     path('proposals/', views.proposal_list, name='proposal_list'),

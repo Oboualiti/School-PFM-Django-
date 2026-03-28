@@ -3,37 +3,159 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col">
-          <h3 class="page-title">Time Table</h3>
+          <h3 class="page-title">Emploi du temps (Time Table)</h3>
+          <p class="text-muted">Visualisation hebdomadaire des cours et salles de classe</p>
+        </div>
+        <div class="col-auto">
+          <a href="{% url 'visual_tool' %}" class="btn btn-primary">
+            <i class="fas fa-external-link-alt"></i> Visual Timetabling
+          </a>
         </div>
       </div>
     </div>
-    {% for day, slots in schedule.items %}
-    <div class="card mb-3">
-      <div class="card-header"><strong>{{ day }}</strong></div>
-      <div class="card-body p-0">
-        <table class="table mb-0">
-          <thead>
-            <tr><th>Subject</th><th>Teacher</th><th>Start</th><th>End</th><th>Classroom</th></tr>
-          </thead>
-          <tbody>
-            {% for slot in slots %}
-            <tr>
-              <td>{{ slot.subject.name }}</td>
-              <td>{{ slot.teacher }}</td>
-              <td>{{ slot.start_time }}</td>
-              <td>{{ slot.end_time }}</td>
-              <td>{{ slot.classroom }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">No slots</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
+
+    <!-- Responsive Timetable Grid -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Semaine Scolaire</h5>
+      </div>
+      <div class="card-body">
+        <div class="timetable-container">
+          {% for day, slots in schedule.items %}
+          <div class="timetable-day">
+            <div class="day-header">{{ day }}</div>
+            <div class="time-slots">
+              {% for slot in slots %}
+              <div class="time-slot card">
+                <div class="card-body p-2">
+                  <div class="slot-subject fw-bold">{{ slot.subject.name }}</div>
+                  <div class="slot-teacher text-muted small">{{ slot.teacher }}</div>
+                  <div class="slot-time small">
+                    {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
+                  </div>
+                  <div class="slot-room badge bg-secondary">{{ slot.classroom }}</div>
+                </div>
+              </div>
+              {% empty %}
+              <div class="time-slot empty">
+                <div class="text-muted text-center p-2">Aucun cours</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
-    {% endfor %}
+
+    <!-- Traditional Table View (Fallback) -->
+    <div class="card mt-4 d-none d-lg-block">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Vue Tableau Détaillée</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Jour</th><th>Matière</th><th>Enseignant</th><th>Début</th><th>Fin</th><th>Salle</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for day, slots in schedule.items %}
+                {% for slot in slots %}
+                <tr>
+                  <td><strong>{{ day }}</strong></td>
+                  <td>{{ slot.subject.name }}</td>
+                  <td>{{ slot.teacher }}</td>
+                  <td>{{ slot.start_time|time:"H:i" }}</td>
+                  <td>{{ slot.end_time|time:"H:i" }}</td>
+                  <td><span class="badge bg-secondary">{{ slot.classroom }}</span></td>
+                </tr>
+                {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<style>
+.timetable-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.timetable-day {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+}
+
+.day-header {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.time-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.time-slot.card {
+  border: 1px solid #dee2e6;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.time-slot.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.slot-subject {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.slot-teacher {
+  font-size: 0.8rem;
+}
+
+.slot-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.slot-room {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .timetable-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .timetable-day {
+    padding: 0.5rem;
+  }
+  
+  .time-slot.card .card-body {
+    padding: 0.5rem;
+  }
+}
+</style>
 {% endblock %}
