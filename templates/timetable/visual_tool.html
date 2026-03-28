@@ -1,14 +1,15 @@
 {% extends 'Home/base.html' %}
+{% load static %}
 {% block body %}
 <div class="page-wrapper">
     <div class="content container-fluid">
         <div class="page-header">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col">
                     <h3 class="page-title">Générateur Visual Timetabling</h3>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Time Table</a></li>
-                        <li class="breadcrumb-item active">Visual Tool</li>
+                        <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Emploi du temps</a></li>
+                        <li class="breadcrumb-item active">Visual Timetabling</li>
                     </ul>
                 </div>
             </div>
@@ -16,55 +17,123 @@
 
         {% if integration_enabled and external_url %}
             <div class="row">
-                <div class="col-md-12">
+                <!-- Action Card -->
+                <div class="col-md-8 col-lg-8 col-xl-8">
                     <div class="card">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Lancement de l'outil externe</h5>
+                        </div>
                         <div class="card-body">
-                            <div id="vt-fallback" class="alert alert-warning" style="display:none">
-                                Impossible d'afficher l'outil dans un cadre (bloqué par le site distant, CSP, ou le navigateur).
-                                <a id="vt-open" class="btn btn-sm btn-primary ml-2" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet</a>
-                                <button id="vt-retry" class="btn btn-sm btn-outline-secondary ml-1">Réessayer</button>
+                            <div class="text-center py-4">
+                                <img src="{% static 'assets/img/logo.png' %}" alt="Logo" class="img-fluid mb-4" style="max-height: 80px; opacity: 0.5;">
+                                <h4>Prêt à planifier votre emploi du temps ?</h4>
+                                <p class="text-muted mb-4">
+                                    En raison des politiques de sécurité modernes (X-Frame-Options), Visual Timetabling doit être ouvert dans un nouvel onglet pour fonctionner correctement.
+                                </p>
+                                
+                                <div class="d-flex justify-content-center flex-wrap" style="gap: 15px;">
+                                    <a href="{{ external_url }}" target="_blank" rel="noopener" class="btn btn-primary btn-lg px-5">
+                                        <i class="fas fa-external-link-alt mr-2"></i> Ouvrir Visual Timetabling
+                                    </a>
+                                </div>
                             </div>
-                            <iframe id="vt-frame" src="" width="100%" height="800" frameborder="0" referrerpolicy="no-referrer" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Card -->
+                <div class="col-md-4 col-lg-4 col-xl-4">
+                    <div class="card">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Données</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">
+                                Exportez vos données actuelles au format JSON pour les importer facilement dans l'outil de planification.
+                            </p>
+                            <a href="{% url 'export_json' %}" class="btn btn-outline-primary btn-block w-100" download="timetable.json">
+                                <i class="fas fa-download mr-2"></i> Exporter JSON
+                            </a>
+                            
+                            <hr class="my-4">
+                            
+                            <h6 class="mb-3">Instructions d'utilisation :</h6>
+                            <ul class="list-unstyled small text-muted">
+                                <li class="mb-2"><i class="fas fa-arrow-right mr-2 text-primary"></i> 1. Cliquez sur "Exporter JSON"</li>
+                                <li class="mb-2"><i class="fas fa-arrow-right mr-2 text-primary"></i> 2. Ouvrez Visual Timetabling</li>
+                                <li class="mb-2"><i class="fas fa-arrow-right mr-2 text-primary"></i> 3. Importez le fichier généré</li>
+                                <li><i class="fas fa-arrow-right mr-2 text-primary"></i> 4. Générez vos grilles</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <script>
-              (function(){
-                var url = "{{ external_url|escapejs }}";
-                var frame = document.getElementById('vt-frame');
-                var fallback = document.getElementById('vt-fallback');
-                var openBtn = document.getElementById('vt-open');
-                var retryBtn = document.getElementById('vt-retry');
-                openBtn.href = url;
-                var attempts = 0;
-                var delays = [0, 1500, 3000, 5000];
-                function loadWithBackoff(){
-                  var delay = delays[Math.min(attempts, delays.length-1)];
-                  setTimeout(function(){
-                    attempts++;
-                    var bust = (url.indexOf('?')>-1?'&':'?')+'t='+(Date.now());
-                    frame.src = url + bust;
-                  }, delay);
-                }
-                function showFallback(){
-                  fallback.style.display = '';
-                }
-                var loaded = false;
-                frame.addEventListener('load', function(){
-                  loaded = true;
-                });
-                // If no load event in 4s, assume blocked
-                setTimeout(function(){ if(!loaded){ showFallback(); } }, 4000);
-                retryBtn.addEventListener('click', function(e){ e.preventDefault(); loaded=false; loadWithBackoff(); });
-                // Initial try
-                loadWithBackoff();
-              })();
-            </script>
+
+            <!-- Features Info -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Fonctionnalités de l'intégration</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3 text-primary">
+                                            <i class="fas fa-calendar-alt fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Planification visuelle</h6>
+                                            <span class="text-muted small">Grilles interactives et intuitives</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3 text-primary">
+                                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Gestion des conflits</h6>
+                                            <span class="text-muted small">Détection automatique des erreurs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3 text-primary">
+                                            <i class="fas fa-magic fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Optimisation</h6>
+                                            <span class="text-muted small">Algorithmes d'amélioration</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% else %}
-            <div class="alert alert-info">
-                L'intégration Visual Timetabling est désactivée pour cet environnement.
-                <a href="https://www.visual-timetabling.be/" target="_blank" rel="noopener">Ouvrir le site</a>
+            <!-- Integration Disabled State -->
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-plug fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Intégration Désactivée</h4>
+                        <p class="text-muted">
+                            L'intégration Visual Timetabling est actuellement désactivée pour cet environnement.
+                        </p>
+                    </div>
+                    <a href="https://www.visual-timetabling.be/" 
+                       target="_blank" 
+                       rel="noopener" 
+                       class="btn btn-primary">
+                        <i class="fas fa-external-link-alt mr-2"></i> Accéder à Visual Timetabling
+                    </a>
+                </div>
             </div>
         {% endif %}
     </div>

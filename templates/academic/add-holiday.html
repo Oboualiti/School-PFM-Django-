@@ -3,33 +3,68 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col">
           <h3 class="page-title">Add Holiday</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'holiday_list' %}">Holidays</a></li>
+            <li class="breadcrumb-item active">Add Holiday</li>
+          </ul>
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          <div class="form-group">
-            <label>Name</label>
-            <input class="form-control" type="text" name="name" required>
+    
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-12">
+                  <h5 class="form-title"><span>Holiday Information</span></h5>
+                </div>
+                
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" type="text" name="name" required>
+                  </div>
+                </div>
+                
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Date</label>
+                    <input class="form-control" type="date" name="holiday_date" required>
+                  </div>
+                </div>
+                
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Type</label>
+                    <select class="form-control" name="type" required>
+                      <option value="">Select Type</option>
+                      <option value="Public">Public Holiday</option>
+                      <option value="School">School Holiday</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="1"></textarea>
+                  </div>
+                </div>
+                
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">Save Holiday</button>
+                  <a href="{% url 'holiday_list' %}" class="btn btn-secondary ml-2">Cancel</a>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="form-group">
-            <label>Date</label>
-            <input class="form-control" type="date" name="holiday_date" required>
-          </div>
-          <div class="form-group">
-            <label>Type</label>
-            <select class="form-control" name="type" required>
-              <option value="Public">Public</option>
-              <option value="School">School</option>
-            </select>
-          </div>
-          <button class="btn btn-primary" type="submit">Save</button>
-        </form>
+        </div>
       </div>
     </div>
   </div>

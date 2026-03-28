@@ -71,13 +71,19 @@
                            <img src="{%static 'assets/img/profiles/avatar-01.jpg'%}" alt="User Image" class="avatar-img rounded-circle">
                         </div>
                         <div class="user-text">
-                           {% comment %} <h6>{{user.username}}</h6> {% endcomment %}
-                           <p class="text-muted mb-0">Administrator</p>
+                           <h6>{% if user.is_authenticated %}{{ user.username }}{% endif %}</h6>
+                           <p class="text-muted mb-0">
+                              {% if user.is_authenticated and user.is_admin %}Administrator{% elif user.is_authenticated and user.is_teacher %}Teacher{% elif user.is_authenticated and user.is_student %}Student{% else %}User{% endif %}
+                           </p>
                         </div>
                      </div>
-                     <a class="dropdown-item" href="profile.html">My Profile</a>
+                     {% if user.is_authenticated and user.is_student %}
+                     <a class="dropdown-item" href="{% url 'my_profile' %}">My Profile</a>
+                     {% else %}
+                     <a class="dropdown-item" href="#">My Profile</a>
+                     {% endif %}
                      <a class="dropdown-item" href="inbox.html">Inbox</a>
-                     <a class="dropdown-item" href="">Logout</a>
+                     <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                   </div>
                </li>
             </ul>
