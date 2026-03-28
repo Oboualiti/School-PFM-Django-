@@ -60,6 +60,13 @@ def edit_department(request, dept_id):
         'teachers': teachers
     })
 
+@login_required    
+def delete_department(request, dept_id):
+    if request.method == "POST":
+        department = get_object_or_404(Department, id=dept_id)
+        department.delete()
+        messages.success(request, "Department deleted successfully!")
+    return redirect('department_list')
 # --- GESTION DES NOTES (GRADES) ---
 
 @login_required

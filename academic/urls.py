@@ -6,7 +6,7 @@ urlpatterns = [
     path('departments/', views.department_list, name='department_list'),
     path('departments/add/', views.add_department, name='add_department'),
     path('departments/<int:dept_id>/edit/', views.edit_department, name='edit_department'),
-    
+    path('department/delete/<int:dept_id>/', views.delete_department, name='delete_department'),
     # Subject URLs
     path('subjects/', views.subject_list, name='subject_list'),
     path('subjects/add/', views.add_subject, name='add_subject'),
