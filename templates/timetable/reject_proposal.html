@@ -1,0 +1,40 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <div class="page-header">
+            <h3 class="page-title">Reject Proposal</h3>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+
+                <p><strong>Subject:</strong> {{ proposal.subject }}</p>
+                <p><strong>Teacher:</strong> {{ proposal.teacher }}</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>Reason:</label>
+                        <textarea name="reason" class="form-control" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger mt-2">
+                        Reject
+                    </button>
+
+                    <a href="{% url 'proposal_list' %}" class="btn btn-secondary mt-2">
+                        Cancel
+                    </a>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

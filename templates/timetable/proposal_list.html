@@ -1,0 +1,105 @@
+{% extends 'Home/base.html' %}
+{% block body %}
+
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <div class="page-header">
+            <h3 class="page-title">Proposals</h3>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+
+                {% if proposals %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Day</th>
+                                <th>Time</th>
+                                <th>Classroom</th>
+                                <th>Status</th>
+                                {% if user.is_admin %}
+                                <th>Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for p in proposals %}
+                            <tr>
+                                <td>{{ p.subject }}</td>
+                                <td>{{ p.day }}</td>
+                                <td>{{ p.start_time }} - {{ p.end_time }}</td>
+
+                                <!-- Classroom + rejection reason -->
+                                <td>
+                                    {{ p.classroom }}
+
+                                    {% if p.status == 'Rejected' %}
+                                        <br>
+                                        <small style="color:red;">
+                                            Reason: {{ p.rejection_reason }}
+                                        </small>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Status -->
+                                <td>
+                                    {% if p.status == 'Pending' %}
+                                        <span class="badge badge-warning">Pending</span>
+                                    {% elif p.status == 'Approved' %}
+                                        <span class="badge badge-success">Approved</span>
+                                    {% elif p.status == 'Rejected' %}
+                                        <span class="badge badge-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Admin Actions -->
+                                {% if user.is_admin %}
+                                <td>
+                                    {% if p.status == 'Pending' %}
+                                        <a href="{% url 'approve_proposal' p.id %}" 
+                                           class="btn btn-success btn-sm">
+                                            Approve
+                                        </a>
+
+                                        <a href="{% url 'reject_proposal' p.id %}" 
+                                           class="btn btn-danger btn-sm">
+                                            Reject
+                                        </a>
+
+                                    {% elif p.status == 'Approved' %}
+                                        <span class="badge badge-success">Approved</span>
+
+                                    {% elif p.status == 'Rejected' %}
+                                        <span class="badge badge-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+                <div class="text-center py-5">
+                    <h5>No proposals yet</h5>
+                    <p class="text-muted">Start by creating one</p>
+                    <a href="{% url 'add_proposal' %}" class="btn btn-primary">
+                        Create Proposal
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
