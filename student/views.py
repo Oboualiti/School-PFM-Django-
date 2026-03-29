@@ -4,6 +4,8 @@ from django.contrib import messages
 from .models import Student, Parent
 from home_auth.decorators import admin_required
 from django.contrib.auth.decorators import login_required
+import csv
+
 
 
 @login_required
@@ -144,3 +146,25 @@ def my_profile(request):
     return render(request, 'students/student-details.html', {'student': me})
 
 
+@login_required
+def export_students_csv(request):
+   
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="students_list.csv"'
+
+    writer = csv.writer(response)
+    
+    writer.writerow(['ID', 'First Name', 'Last Name', 'Email'])
+
+    # Write data rows
+    students = Student.objects.all()
+    for student in students:
+        # Adjust these fields to match your actual Student model
+        writer.writerow([
+            student.student_id, 
+            student.first_name, 
+            student.last_name, 
+            student.parent.father_email if student.parent else 'N/A'
+        ])
+
+    return response

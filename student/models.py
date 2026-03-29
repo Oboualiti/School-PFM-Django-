@@ -19,12 +19,16 @@ class Parent(models.Model):
    def __str__(self):
      return f"{self.father_name} & {self.mother_name}"
  
+
+
+
 class Student(models.Model):
+   
    parent = models.OneToOneField(Parent, on_delete=models.CASCADE)
    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
    first_name = models.CharField(max_length=100)
    last_name = models.CharField(max_length=100)
-   student_id = models.CharField(max_length=20)
+   student_id = models.CharField(max_length=20 , unique=True)
    gender = models.CharField(max_length=10,
    choices=[('Male','Male'), ('Female','Female')])
    date_of_birth = models.DateField()

@@ -8,6 +8,11 @@ import uuid
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 
+
+
+
+
+
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
@@ -61,4 +66,6 @@ class PasswordResetRequest(models.Model):
             [self.email],
             fail_silently=False,
         )
-        
+
+   
+
