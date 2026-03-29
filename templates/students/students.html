@@ -44,10 +44,10 @@
                                        <td>
                                           <h2 class="table-avatar">
                                              {% comment %} <a href="{% url 'view_student' student.student_id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{ student.student_image ? student.student_image.url : '' }}" alt="User Image"></a> {% endcomment %}
-                                             <a href="{% url 'view_student' student.student_id %}">{{ student.first_name }} {{ student.last_name}}</a>
+                                             <a href="{% url 'view_student' student.student_id %}">{{ student.user.first_name }} {{ student.user.last_name}}</a>
                                           </h2>
                                        </td>
-                                       <td>{{ student.parent.father_email }}</td>
+                                       <td>{{ student.user.email }}</td>
                                        {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
                                        <td class="text-right">
                                           <div class="actions">

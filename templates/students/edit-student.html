@@ -97,7 +97,11 @@
                                     <div class="form-group">
                                         <label>Student Image</label>
                                         <input type="file" name="student_image" class="form-control">
-                                        <small>Current Image: {{ student.student_image.url }}</small>
+                                        {% if student.student_image %}
+                                             <img src="{{ student.student_image.url }}">
+                                         {% else %}
+                                              <img src="{% static 'assets/img/default-avatar.png' %}">
+                                         {% endif %}
                                     </div>
                                 </div>
                                 <div class="col-12">

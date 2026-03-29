@@ -13,6 +13,7 @@ from django.utils import timezone
 
 
 
+
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
@@ -21,13 +22,12 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    
-       # Fields for user roles
+
+    # Fields for user roles
     is_student = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    is_teacher = models.BooleanField(default=False) 
+    is_teacher = models.BooleanField(default=False)
 
-    # Set related_name to None to prevent reverse relationship creation
     groups = models.ManyToManyField(
         'auth.Group',
         related_name=None,

@@ -23,7 +23,7 @@ def add_student(request):
         # Récupérer les données de l'étudiant
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        student_id = request.POST.get('student_id')
+       
         gender = request.POST.get('gender')
         date_of_birth = request.POST.get('date_of_birth')
         student_class = request.POST.get('student_class')
@@ -61,6 +61,7 @@ def add_student(request):
 
         # Create student
         student = Student.objects.create(
+            user=request.user,
             first_name=first_name,
             last_name=last_name,
             student_id=student_id,
@@ -100,21 +101,32 @@ def edit_student(request, student_id):
         student.section = request.POST.get('section')
         if request.FILES.get('student_image'):
             student.student_image = request.FILES.get('student_image')
-        student.save()
+        
 
         # Update parent fields
-        parent.father_name = request.POST.get('father_name')
-        parent.father_occupation = request.POST.get('father_occupation')
-        parent.father_mobile = request.POST.get('father_mobile')
-        parent.father_email = request.POST.get('father_email')
-        parent.mother_name = request.POST.get('mother_name')
-        parent.mother_occupation = request.POST.get('mother_occupation')
-        parent.mother_mobile = request.POST.get('mother_mobile')
-        parent.mother_email = request.POST.get('mother_email')
-        parent.present_address = request.POST.get('present_address')
-        parent.permanent_address = request.POST.get('permanent_address')
-        parent.save()
+                    
+        
+        parent = student.parent
 
+        if parent is None:
+           
+           parent = Parent.objects.create()
+
+           student.parent = parent
+
+        father_name = request.POST.get('father_name')
+        father_occupation = request.POST.get('father_occupation')
+        father_mobile = request.POST.get('father_mobile')
+        father_email = request.POST.get('father_email')
+        mother_name = request.POST.get('mother_name')
+        mother_occupation = request.POST.get('mother_occupation')
+        mother_mobile = request.POST.get('mother_mobile')
+        mother_email = request.POST.get('mother_email')
+        present_address = request.POST.get('present_address')
+        permanent_address = request.POST.get('permanent_address')
+
+        parent.save()
+        student.save()        
         messages.success(request, 'Student updated successfully!')
         if request.user.is_student:
             return redirect('my_profile')

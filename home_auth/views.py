@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import CustomUser, PasswordResetRequest
-from staff.models import Teacher  
+from staff.models import Teacher 
+from student.models import Student 
 
 
 def signup_view(request):
@@ -42,6 +43,11 @@ def signup_view(request):
         # Assign ONE role only
         if role == 'student':
             user.is_student = True
+
+        user.save()    
+
+        if user.is_student:
+            Student.objects.get_or_create(user=user)
 
         elif role == 'teacher':
             user.is_teacher = True
