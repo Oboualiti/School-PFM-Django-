@@ -28,7 +28,7 @@ class Student(models.Model):
    gender = models.CharField(max_length=10,
    choices=[('Male','Male'), ('Female','Female')])
    date_of_birth = models.DateField()
-   student_class = models.CharField(max_length=50)
+   student_class = models.CharField(max_length=50 , choices=[('class A','class A'), ('class B','class B'), ('class C','class C')])
    joining_date = models.DateField()
    mobile_number = models.CharField(max_length=15)
    admission_number = models.CharField(max_length=20)
