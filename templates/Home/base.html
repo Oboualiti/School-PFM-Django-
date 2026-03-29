@@ -181,9 +181,45 @@
                      <li>
                         <a href="event.html"><i class="fas fa-calendar-day"></i> <span>Events</span></a>
                      </li>
-                     <li>
-                        <a href="{% url 'visual_tool' %}"><i class="fas fa-table"></i> <span>Time Table</span></a>
-                     </li>
+ <li>
+    <a href="{% url 'timetable_list' %}">
+        <i class="fas fa-calendar"></i> <span>View Timetable</span>
+    </a>
+</li>
+
+{% if user.is_authenticated and user.is_admin %}
+<li>
+    <a href="{% url 'add_timetable' %}">
+        <i class="fas fa-plus-circle"></i> <span>Add Timetable</span>
+    </a>
+</li>
+
+<li>
+    <a href="{% url 'proposal_list' %}">
+        <i class="fas fa-tasks"></i> <span>Review Proposals</span>
+    </a>
+</li>
+{% endif %}
+
+{% if user.is_authenticated and user.is_teacher %}
+<li>
+    <a href="{% url 'proposal_list' %}">
+        <i class="fas fa-paper-plane"></i> <span>My Proposals</span>
+    </a>
+</li>
+
+<li>
+    <a href="{% url 'add_proposal' %}">
+        <i class="fas fa-plus"></i> <span>Request Schedule</span>
+    </a>
+</li>
+{% endif %}
+
+<li>
+  <a href="{% url 'visual_tool' %}">
+    <i class="fas fa-table"></i> <span>Generate Timetable</span>
+  </a>
+</li>
                      <li>
                         <a href="library.html"><i class="fas fa-book"></i> <span>Library</span></a>
                      </li>
