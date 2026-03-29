@@ -1,20 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden, JsonResponse
+from django.contrib.auth.decorators import login_required
 from .models import TimeTable, TimetableProposal
 from academic.models import Subject
 from staff.models import Teacher
 from django.conf import settings
 
 
+# =========================
 # VIEW TIMETABLE
+# =========================
+@login_required
 def timetable_list(request):
 
     if request.user.is_admin:
         slots = TimeTable.objects.all()
 
-    elif hasattr(request.user, 'teacher_profile'):
+    elif request.user.is_teacher:
         slots = TimeTable.objects.filter(
-            teacher=request.user.teacher_profile
+            teacher__user=request.user
         )
 
     elif hasattr(request.user, 'student'):
@@ -40,11 +44,15 @@ def timetable_list(request):
 
     return render(request, 'timetable/timetable.html', {'schedule': schedule})
 
+
+# =========================
 # ADMIN ADD TIMETABLE
+# =========================
+@login_required
 def add_timetable(request):
 
     if not request.user.is_admin:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("Access Denied")
 
     if request.method == 'POST':
         TimeTable.objects.create(
@@ -66,7 +74,10 @@ def add_timetable(request):
     })
 
 
+# =========================
 # EXPORT JSON
+# =========================
+@login_required
 def export_timetable_json(request):
     data = list(TimeTable.objects.values(
         'day',
@@ -79,7 +90,10 @@ def export_timetable_json(request):
     return JsonResponse(data, safe=False)
 
 
+# =========================
 # VISUAL TOOL
+# =========================
+@login_required
 def visual_timetabling_embed(request):
     enabled = getattr(settings, 'VISUAL_TIMETABLING_ENABLED', True)
     external_url = getattr(settings, 'VISUAL_TIMETABLING_URL', 'https://www.visual-timetabling.be/')
@@ -90,15 +104,22 @@ def visual_timetabling_embed(request):
     })
 
 
-# ADD PROPOSAL
+# =========================
+# ADD PROPOSAL (TEACHER ONLY)
+# =========================
+@login_required
 def add_proposal(request):
 
-    if not hasattr(request.user, 'teacher_profile'):
-        return HttpResponseForbidden()
+    if not request.user.is_teacher:
+        return HttpResponseForbidden("Access Denied")
+
+    teacher = Teacher.objects.filter(user=request.user).first()
+    if not teacher:
+        return HttpResponseForbidden("Teacher profile not found")
 
     if request.method == 'POST':
         TimetableProposal.objects.create(
-            teacher=request.user.teacher_profile,
+            teacher=teacher,
             subject_id=request.POST.get('subject'),
             day=request.POST.get('day'),
             start_time=request.POST.get('start_time'),
@@ -114,41 +135,49 @@ def add_proposal(request):
     })
 
 
-
+# =========================
 # LIST PROPOSALS
-
+# =========================
+@login_required
 def proposal_list(request):
-    print("USER:", request.user)
 
+    # ✅ ADMIN → sees ALL proposals
     if request.user.is_admin:
         proposals = TimetableProposal.objects.all()
 
-    elif hasattr(request.user, 'teacher_profile'):
+    # ✅ TEACHER → sees ONLY their proposals
+    elif request.user.is_teacher:
+        teacher = Teacher.objects.filter(user=request.user).first()
+        if not teacher:
+            return HttpResponseForbidden("Teacher profile not found")
+
         proposals = TimetableProposal.objects.filter(
-            teacher=request.user.teacher_profile
+            teacher=teacher
         )
 
     else:
-        return HttpResponseForbidden()
-
-    print("PROPOSALS:", proposals)
+        return HttpResponseForbidden("Access Denied")
 
     return render(request, 'timetable/proposal_list.html', {
         'proposals': proposals
     })
 
-# APPROVE PROPOSAL (ADMIN)
+
+# =========================
+# APPROVE PROPOSAL (ADMIN ONLY)
+# =========================
+@login_required
 def approve_proposal(request, proposal_id):
+
     if not request.user.is_admin:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("Access Denied")
 
     proposal = get_object_or_404(TimetableProposal, id=proposal_id)
 
     proposal.status = 'Approved'
-    proposal.rejection_reason = ''  # clear any old reason
+    proposal.rejection_reason = ''
     proposal.save()
 
-    # create timetable
     TimeTable.objects.create(
         day=proposal.day,
         subject=proposal.subject,
@@ -160,21 +189,15 @@ def approve_proposal(request, proposal_id):
 
     return redirect('proposal_list')
 
-    # create timetable
-    TimeTable.objects.create(
-        day=proposal.day,
-        subject=proposal.subject,
-        teacher=proposal.teacher,
-        start_time=proposal.start_time,
-        end_time=proposal.end_time,
-        classroom=proposal.classroom
-    )
 
-    return redirect('proposal_list')
-
+# =========================
+# REJECT PROPOSAL (ADMIN ONLY)
+# =========================
+@login_required
 def reject_proposal(request, proposal_id):
+
     if not request.user.is_admin:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("Access Denied")
 
     proposal = get_object_or_404(TimetableProposal, id=proposal_id)
 

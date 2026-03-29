@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import CustomUser, PasswordResetRequest
+from staff.models import Teacher  
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -11,35 +13,53 @@ def signup_view(request):
         password = request.POST.get('password', '')
         confirm = request.POST.get('confirm_password', '')
         role = request.POST.get('role')
+
+        # Password check
         if not password or password != confirm:
             messages.error(request, 'Passwords do not match.')
             return render(request, 'authentication/register.html')
+
+        # Email check
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request, 'An account with this email already exists.')
             return render(request, 'authentication/register.html')
 
+        # Create user
         user = CustomUser.objects.create_user(
             username=email,
             email=email,
             first_name=first_name,
             last_name=last_name,
             password=password,
-            
         )
+
+        # Reset roles
+        user.is_student = False
+        user.is_teacher = False
+        user.is_admin = False
+        user.is_staff = False
+
+        # Assign ONE role only
         if role == 'student':
             user.is_student = True
-        elif role == 'admin':
-            user.is_admin = True
-            user.is_staff = True
+
         elif role == 'teacher':
             user.is_teacher = True
+
+        # DO NOT allow admin from signup
+
         user.save()
+
+        # CREATE TEACHER PROFILE 
+        if user.is_teacher:
+            Teacher.objects.get_or_create(user=user)
 
         login(request, user)
         messages.success(request, 'Signup successful!')
         return redirect('index')
 
     return render(request, 'authentication/register.html')
+
 
 def forgot_password_view(request):
     if request.method == 'POST':
@@ -55,6 +75,7 @@ def forgot_password_view(request):
         return redirect('login')
     
     return render(request, 'authentication/forgot-password.html')
+
 
 def reset_password_view(request, token):
     reset_request = get_object_or_404(PasswordResetRequest, token=token)
@@ -78,6 +99,7 @@ def reset_password_view(request, token):
             messages.error(request, 'Passwords do not match.')
             
     return render(request, 'authentication/reset_password.html', {'token': token})
+
 
 def login_view(request):
     if request.method == 'POST':
