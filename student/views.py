@@ -125,6 +125,19 @@ def edit_student(request, student_id):
         present_address = request.POST.get('present_address')
         permanent_address = request.POST.get('permanent_address')
 
+        parent.father_name = father_name
+        parent.father_occupation = father_occupation
+        parent.father_mobile = father_mobile
+        parent.father_email = father_email
+        parent.mother_name = mother_name
+        parent.mother_occupation = mother_occupation
+        parent.mother_mobile = mother_mobile
+        parent.mother_email = mother_email
+        parent.present_address = present_address
+        parent.permanent_address = permanent_address
+
+        
+
         parent.save()
         student.save()        
         messages.success(request, 'Student updated successfully!')
