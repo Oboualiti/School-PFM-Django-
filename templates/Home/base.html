@@ -78,7 +78,7 @@
                         </div>
                      </div>
                      {% if user.is_authenticated and user.is_student %}
-                     <a class="dropdown-item" href="{% url 'my_profile' %}">My Profile</a>
+                     <a class="dropdown-item" href="{% url 'my_profile' student_id=user.student.student_id %}">My Profile</a>
                      {% else %}
                      <a class="dropdown-item" href="#">My Profile</a>
                      {% endif %}
@@ -114,7 +114,7 @@
                         <ul>
                            <li><a href="{% url 'student_list' %}">Student List</a></li>
                            {% if user.is_authenticated and user.is_student %}
-                           <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                           <li><a href="{% url 'my_profile' student_id=user.student.student_id %}">My Profile</a></li>
                            {% elif user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
                            <li><a href="{% url 'add_student' %}">Student Add</a></li>
                            {% endif %}

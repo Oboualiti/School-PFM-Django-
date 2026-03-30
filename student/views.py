@@ -125,6 +125,19 @@ def edit_student(request, student_id):
         present_address = request.POST.get('present_address')
         permanent_address = request.POST.get('permanent_address')
 
+        parent.father_name = father_name
+        parent.father_occupation = father_occupation
+        parent.father_mobile = father_mobile
+        parent.father_email = father_email
+        parent.mother_name = mother_name
+        parent.mother_occupation = mother_occupation
+        parent.mother_mobile = mother_mobile
+        parent.mother_email = mother_email
+        parent.present_address = present_address
+        parent.permanent_address = permanent_address
+
+
+
         parent.save()
         student.save()        
         messages.success(request, 'Student updated successfully!')
@@ -143,7 +156,9 @@ def view_student(request, student_id):
 @admin_required
 def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
+    user = student.user 
     student.delete()
+    user.delete()  # Delete the associated user
     return redirect('student_list')
 
 @login_required
@@ -151,11 +166,14 @@ def student_dashboard(request):
     return render(request, 'students/student-dashboard.html')
 
 @login_required
-def my_profile(request):
-    me = Student.objects.filter(user_id=request.user.id).first()
-    if not me:
-        return HttpResponseForbidden()
-    return render(request, 'students/student-details.html', {'student': me})
+def my_profile(request , student_id):
+    student = get_object_or_404(Student, student_id=student_id)
+
+    context = {
+        "student": student
+    }
+
+    return render(request, "students/my_profile.html", context)
 
 
 @login_required
@@ -180,3 +198,7 @@ def export_students_csv(request):
         ])
 
     return response
+
+
+
+
