@@ -136,7 +136,7 @@ def edit_student(request, student_id):
         parent.present_address = present_address
         parent.permanent_address = permanent_address
 
-        
+
 
         parent.save()
         student.save()        
@@ -156,7 +156,9 @@ def view_student(request, student_id):
 @admin_required
 def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
+    user = student.user 
     student.delete()
+    user.delete()  # Delete the associated user
     return redirect('student_list')
 
 @login_required
@@ -164,11 +166,14 @@ def student_dashboard(request):
     return render(request, 'students/student-dashboard.html')
 
 @login_required
-def my_profile(request):
-    me = Student.objects.filter(user_id=request.user.id).first()
-    if not me:
-        return HttpResponseForbidden()
-    return render(request, 'students/student-details.html', {'student': me})
+def my_profile(request , student_id):
+    student = get_object_or_404(Student, student_id=student_id)
+
+    context = {
+        "student": student
+    }
+
+    return render(request, "students/my_profile.html", context)
 
 
 @login_required
@@ -193,3 +198,7 @@ def export_students_csv(request):
         ])
 
     return response
+
+
+
+

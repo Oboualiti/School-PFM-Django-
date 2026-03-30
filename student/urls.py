@@ -13,6 +13,6 @@ urlpatterns = [
  views.delete_student, name='delete_student'),
 
  path('student_dashboard/', views.student_dashboard, name='student_dashboard'),
- path('me/', views.my_profile, name='my_profile'),
+ path('profile/<str:student_id>/', views.my_profile , name='my_profile'),
 
 ]
