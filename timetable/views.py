@@ -23,7 +23,7 @@ def timetable_list(request):
 
         slots = TimeTable.objects.filter(
             student_class=student.student_class,
-            section=student.section
+            
         )
 
     else:
