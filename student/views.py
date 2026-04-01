@@ -37,10 +37,12 @@ def add_student(request):
         last_name = request.POST.get('last_name')
        
         gender = request.POST.get('gender')
-        date_of_birth = request.POST.get('date_of_birth')
+        date_of_birth = request.POST.get('date_of_birth') or None
         class_id = request.POST.get('student_class')
-        student_class = Class.objects.get(id=class_id)
-        joining_date = request.POST.get('joining_date')
+        student_class = None
+        if class_id:
+            student_class = Class.objects.get(id=class_id)
+        joining_date = request.POST.get('joining_date') or None
         mobile_number = request.POST.get('mobile_number')
         admission_number = request.POST.get('admission_number')
         section = request.POST.get('section')
@@ -97,6 +99,7 @@ def add_student(request):
 def edit_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     parent = student.parent
+    classes = Class.objects.all()
     if request.user.is_student and student.user_id != request.user.id:
         return HttpResponseForbidden()
     if request.method == 'POST':
@@ -104,10 +107,23 @@ def edit_student(request, student_id):
         student.last_name = request.POST.get('last_name')
         student.student_id = request.POST.get('student_id')
         student.gender = request.POST.get('gender')
-        student.date_of_birth = request.POST.get('date_of_birth')
+        
+        date_of_birth = request.POST.get('date_of_birth')
+        if date_of_birth:
+            student.date_of_birth = date_of_birth
+        else:
+            student.date_of_birth = None
+            
         class_id = request.POST.get('student_class')
-        student.student_class = Class.objects.get(id=class_id)
-        student.joining_date = request.POST.get('joining_date')
+        if class_id:
+            student.student_class = Class.objects.get(id=class_id)
+            
+        joining_date = request.POST.get('joining_date')
+        if joining_date:
+            student.joining_date = joining_date
+        else:
+            student.joining_date = None
+            
         student.mobile_number = request.POST.get('mobile_number')
         student.admission_number = request.POST.get('admission_number')
         student.section = request.POST.get('section')
@@ -154,9 +170,9 @@ def edit_student(request, student_id):
         student.save()        
         messages.success(request, 'Student updated successfully!')
         if request.user.is_student:
-            return redirect('my_profile')
+            return redirect('my_profile', student_id=student.student_id)
         return redirect('student_list')
-    return render(request, 'students/edit-student.html', {'student': student})
+    return render(request, 'students/edit-student.html', {'student': student, 'classes': classes})
 
 @login_required
 def view_student(request, student_id):
@@ -170,7 +186,8 @@ def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     user = student.user 
     student.delete()
-    user.delete()  
+    if user:
+        user.delete()  
     return redirect('student_list')
 
 @login_required
