@@ -17,8 +17,8 @@
 
 <h3>Student Information</h3>
 
-<p><b>First Name:</b> {{ student.user.first_name }}</p>
-<p><b>Last Name:</b> {{ student.user.last_name }}</p>
+<p><b>Full Name:</b> {{ student.get_full_name }}</p>
+<p><b>Class:</b> {{ student.student_class }}</p>
 <p><b>Email:</b> {{ student.user.email }}</p>
 <p><b>Student ID:</b> {{ student.student_id }}</p>
 

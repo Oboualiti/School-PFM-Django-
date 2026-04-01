@@ -10,12 +10,17 @@ urlpatterns = [
     # Subject URLs
     path('subjects/', views.subject_list, name='subject_list'),
     path('subjects/add/', views.add_subject, name='add_subject'),
+    path('subjects/edit/<int:subject_id>/', views.edit_subject, name='edit_subject'),
+    path('subjects/delete/<int:subject_id>/', views.delete_subject, name='delete_subject'),
     
     # Exam URLs
     path('exams/', views.exam_list, name='exam_list'),
     path('exams/add/', views.add_exam, name='add_exam'),
+    path('exams/<int:exam_id>/edit/', views.edit_exam, name='edit_exam'),
+    path('exams/<int:exam_id>/delete/', views.delete_exam, name='delete_exam'),
     path('exams/teacher/add/', views.add_exam_teacher, name='add_exam_teacher'),
     path('exams/create/', views.create_exam_api, name='create_exam_api'),
+    path('results/', views.grade_list, name='results'),
     
     # Grade URLs
     path('grades/', views.grade_list, name='grade_list'),

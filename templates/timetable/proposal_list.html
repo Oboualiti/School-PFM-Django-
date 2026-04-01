@@ -4,18 +4,44 @@
 <div class="page-wrapper">
     <div class="content container-fluid">
 
-       <div class="page-header d-flex justify-content-between align-items-center">
-    <h3 class="page-title">Proposals</h3>
-
-    {% if user.is_teacher %}
-        <a href="{% url 'add_proposal' %}" class="btn btn-primary">
-            Add Proposal
-        </a>
-    {% endif %}
-</div>
+       <div class="page-header">
+          <div class="row align-items-center">
+             <div class="col">
+                <h3 class="page-title">Proposals List</h3>
+                <ul class="breadcrumb">
+                   <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                   <li class="breadcrumb-item"><a href="{% url 'proposal_list' %}">Proposals</a></li>
+                   <li class="breadcrumb-item active">Proposals List</li>
+                </ul>
+             </div>
+             {% if user.is_teacher %}
+             <div class="col-auto float-right ml-auto">
+                <a href="{% url 'add_proposal' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Proposal
+                </a>
+             </div>
+             {% endif %}
+          </div>
+       </div>
 
         <div class="card">
             <div class="card-body">
+
+                <!-- Filtering -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <form method="GET">
+                            <select name="department" class="form-control" onchange="this.form.submit()">
+                                <option value="">All Departments</option>
+                                {% for d in departments %}
+                                <option value="{{ d.id }}" {% if selected_dept == d.id|stringformat:"i" %}selected{% endif %}>
+                                    {{ d.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
 
                 {% if proposals %}
                 <div class="table-responsive">
@@ -78,7 +104,7 @@
                                         </a>
 
                                     {% elif p.status == 'Approved' %}
-                                        <span class="badge badge-success">Approved</span>
+                                        <span class="badge badge-info">Done</span>
 
                                     {% elif p.status == 'Rejected' %}
                                         <span class="badge badge-danger">Rejected</span>

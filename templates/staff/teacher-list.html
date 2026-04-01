@@ -7,10 +7,11 @@
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col">
-                    <h3 class="page-title">Teachers</h3>
+                    <h3 class="page-title">Teachers List</h3>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Teachers</li>
+                        <li class="breadcrumb-item"><a href="{% url 'teacher_list' %}">Teachers</a></li>
+                        <li class="breadcrumb-item active">Teachers List</li>
                     </ul>
                 </div>
                 <div class="col-auto float-right ml-auto">
@@ -32,6 +33,23 @@
 
         <div class="row">
             <div class="col-md-12">
+
+                <!-- Filtering -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <form method="GET">
+                            <select name="department" class="form-control" onchange="this.form.submit()">
+                                <option value="">All Departments</option>
+                                {% for d in departments %}
+                                <option value="{{ d.id }}" {% if selected_dept == d.id|stringformat:"i" %}selected{% endif %}>
+                                    {{ d.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-striped custom-table mb-0 datatable">
                         <thead>

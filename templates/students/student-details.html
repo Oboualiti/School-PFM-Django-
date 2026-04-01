@@ -11,7 +11,8 @@
 <div class="col-sm-12">
 <h3 class="page-title">Student Details</h3>
 <ul class="breadcrumb">
-<li class="breadcrumb-item"><a href="/student">Student</a></li>
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{% url 'student_list' %}">Students</a></li>
 <li class="breadcrumb-item active">Student Details</li>
 </ul>
 </div>
@@ -33,10 +34,14 @@
 <ul>
 <li>
 <span class="title-span">Full Name : </span>
-<span class="info-span">{{ student.first_name}}</span>
+<span class="info-span">{{ student.get_full_name }}</span>
 </li>
 <li>
-<span class="title-span">Department : </span>
+<span class="title-span">Class : </span>
+<span class="info-span">{{ student.student_class }}</span>
+</li>
+<li>
+<span class="title-span">Section : </span>
 <span class="info-span">{{student.section}}</span>
 </li>
 <li>
@@ -60,7 +65,7 @@
 </div>
 <div class="row mt-3">
 <div class="col-md-12">
-<p>Hello I am Daisy Parks. Lorem Ipsum is simply dummy text of the printing and typesetting industry, simply dummy text of the printing and typesetting industry.</p>
+<p>Student profile details and academic information.</p>
 </div>
 </div>
 <div class="row follow-sec">

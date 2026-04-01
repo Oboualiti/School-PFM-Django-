@@ -9,9 +9,19 @@ from academic.models import Department
 
 @login_required
 def teacher_list(request):
-    """Display list of all teachers"""
+    dept_id = request.GET.get('department')
     teachers = Teacher.objects.all().select_related('user', 'department')
-    return render(request, 'staff/teacher-list.html', {'teachers': teachers})
+    
+    if dept_id:
+        teachers = teachers.filter(department_id=dept_id)
+        
+    departments = Department.objects.all()
+    
+    return render(request, 'staff/teacher-list.html', {
+        'teachers': teachers,
+        'departments': departments,
+        'selected_dept': dept_id
+    })
 
 
 @admin_required

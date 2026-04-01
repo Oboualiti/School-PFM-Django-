@@ -1,18 +1,29 @@
 {% extends 'Home/base.html' %}
 {% block body %}
+
 <div class="page-wrapper">
   <div class="content container-fluid">
+
     <div class="page-header">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col">
           <h3 class="page-title">Add Time Table Slot</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Time Table</a></li>
+            <li class="breadcrumb-item active">Add Slot</li>
+          </ul>
         </div>
       </div>
     </div>
+
     <div class="card">
       <div class="card-body">
+
         <form method="post">
           {% csrf_token %}
+
+          <!-- Day -->
           <div class="form-group">
             <label>Day</label>
             <select class="form-control" name="day" required>
@@ -24,40 +35,112 @@
               <option>Saturday</option>
             </select>
           </div>
+
+          <!-- ✅ Department -->
+          <div class="form-group">
+            <label>Department</label>
+            <select id="department" class="form-control" required>
+              <option value="">Select Department</option>
+              {% for d in departments %}
+                <option value="{{ d.id }}">{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <!-- ✅ Subject -->
           <div class="form-group">
             <label>Subject</label>
-            <select class="form-control" name="subject" required>
-              {% for s in subjects %}
-              <option value="{{ s.id }}">{{ s.name }}</option>
-              {% endfor %}
+            <select id="subject" name="subject" class="form-control" required>
+              <option value="">Select Subject</option>
             </select>
           </div>
+
+          <!-- ✅ Teacher -->
           <div class="form-group">
             <label>Teacher</label>
-            <select class="form-control" name="teacher" required>
-              {% for t in teachers %}
-              <option value="{{ t.id }}">{{ t }}</option>
-              {% endfor %}
+            <select id="teacher" name="teacher" class="form-control" required>
+              <option value="">Select Teacher</option>
             </select>
           </div>
+
+          <!-- ✅ Class -->
+          <div class="form-group">
+            <label>Class</label>
+            <select id="classroom_select" name="student_class" class="form-control" required>
+              <option value="">Select Class</option>
+            </select>
+          </div>
+
+          <!-- Section -->
+          <div class="form-group">
+            <label>Section</label>
+            <input class="form-control" type="text" name="section" placeholder="Optional (e.g. 1, 2)">
+          </div>
+
+          <!-- Time -->
           <div class="form-row">
             <div class="form-group col-md-6">
-              <label>Start</label>
+              <label>Start Time</label>
               <input class="form-control" type="time" name="start_time" required>
             </div>
             <div class="form-group col-md-6">
-              <label>End</label>
+              <label>End Time</label>
               <input class="form-control" type="time" name="end_time" required>
             </div>
           </div>
+
+          <!-- Classroom -->
           <div class="form-group">
             <label>Classroom</label>
             <input class="form-control" type="text" name="classroom" required>
           </div>
-          <button class="btn btn-primary" type="submit">Save</button>
+
+          <button class="btn btn-primary" type="submit">
+            Save
+          </button>
+
         </form>
+
       </div>
     </div>
+
   </div>
 </div>
+
+<!-- ✅ JAVASCRIPT FILTERING -->
+<script>
+document.getElementById("department").addEventListener("change", function () {
+    const deptId = this.value;
+
+    fetch(`/timetable/get-department-data/${deptId}/`)
+        .then(response => response.json())
+        .then(data => {
+
+            // SUBJECTS
+            let subjectSelect = document.getElementById("subject");
+            subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+            data.subjects.forEach(s => {
+                subjectSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+
+            // TEACHERS
+            let teacherSelect = document.getElementById("teacher");
+            teacherSelect.innerHTML = '<option value="">Select Teacher</option>';
+            data.teachers.forEach(t => {
+                teacherSelect.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+            });
+
+            // CLASSES
+            let classSelect = document.getElementById("classroom_select");
+            classSelect.innerHTML = '<option value="">Select Class</option>';
+            data.classes.forEach(c => {
+                classSelect.innerHTML += `<option value="${c.id}">
+                    ${c.name} (${c.section})
+                </option>`;
+            });
+
+        });
+});
+</script>
+
 {% endblock %}

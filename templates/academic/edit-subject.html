@@ -1,0 +1,90 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h3 class="page-title">Edit Subject</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="{% url 'subject_list' %}">Subjects</a>
+            </li>
+            <li class="breadcrumb-item active">Edit Subject</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="row">
+
+                <!-- SUBJECT NAME -->
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Subject Name</label>
+                    <input type="text" name="name" class="form-control"
+                           value="{{ subject.name }}" required>
+                  </div>
+                </div>
+
+                <!-- DEPARTMENT -->
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Department</label>
+                    <select name="department" class="form-control" required>
+                      {% for dept in departments %}
+                        <option value="{{ dept.id }}"
+                          {% if dept.id == subject.department.id %}selected{% endif %}>
+                          {{ dept.name }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <!-- TEACHER (ONLY FOR ADMIN) -->
+                {% if request.user.is_admin %}
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label>Teacher</label>
+                    <select name="teacher" class="form-control">
+                      {% for t in teachers %}
+                        <option value="{{ t.id }}"
+                          {% if t.id == subject.teacher.id %}selected{% endif %}>
+                          {{ t.user.username }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
+
+                <!-- SUBMIT -->
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">
+                    Update Subject
+                  </button>
+                </div>
+
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
