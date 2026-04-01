@@ -26,21 +26,6 @@ class Student(models.Model):
     last_name = models.CharField(max_length=100)
 
     student_id = models.CharField(max_length=200, blank=True)
-
-    student_class = models.ForeignKey('academic.Class', on_delete=models.CASCADE)
-    gender = models.CharField(
-        max_length=10,
-        choices=[('Male', 'Male'), ('Female', 'Female')]
-    )
-
-    date_of_birth = models.DateField(null=True, blank=True)
-    joining_date = models.DateField(null=True, blank=True)
-    mobile_number = models.CharField(max_length=15, null=True, blank=True)
-    admission_number = models.CharField(max_length=20, null=True, blank=True)
-    section = models.CharField(max_length=10, null=True, blank=True)
-
-    student_image = models.ImageField(upload_to='students/', null=True, blank=True)
-
     def save(self, *args, **kwargs):
         if not self.student_id:
             last_student = Student.objects.exclude(student_id="").order_by('id').last()
@@ -54,6 +39,21 @@ class Student(models.Model):
             self.student_id = "STU" + str(new_id).zfill(4)
 
         super().save(*args, **kwargs)
+
+    student_class = models.ForeignKey('academic.Class', null=True, on_delete=models.CASCADE)
+    gender = models.CharField(
+        max_length=10,
+        choices=[('Male', 'Male'), ('Female', 'Female')]
+    )
+
+    date_of_birth = models.DateField(null=True, blank=True)
+    joining_date = models.DateField(null=True, blank=True)
+    mobile_number = models.CharField(max_length=15, null=True, blank=True)
+    admission_number = models.CharField(max_length=20, null=True, blank=True)
+    section = models.CharField(max_length=10, null=True, blank=True)
+
+    student_image = models.ImageField(upload_to='students/', null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.student_id})"
