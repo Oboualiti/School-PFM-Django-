@@ -64,10 +64,10 @@ def add_teacher(request):
                 user=user,
                 gender=gender,
                 qualification=qualification,
-                experience=int(experience),
+                experience=int(experience) if experience else 0,
                 mobile_number=mobile_number,
                 address=address,
-                joining_date=joining_date,
+                joining_date=joining_date or None,
                 department=department
             )
             
@@ -95,10 +95,11 @@ def edit_teacher(request, teacher_id):
         # Update teacher data
         teacher.gender = request.POST.get('gender')
         teacher.qualification = request.POST.get('qualification')
-        teacher.experience = int(request.POST.get('experience'))
+        experience = request.POST.get('experience')
+        teacher.experience = int(experience) if experience else 0
         teacher.mobile_number = request.POST.get('mobile_number')
         teacher.address = request.POST.get('address')
-        teacher.joining_date = request.POST.get('joining_date')
+        teacher.joining_date = request.POST.get('joining_date') or None
         
         department_id = request.POST.get('department')
         if department_id:
