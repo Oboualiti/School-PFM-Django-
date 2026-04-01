@@ -129,7 +129,7 @@ school/                    ← Projet principal Django
 Créez un fichier `.env` à la racine du projet :
 
 ```env
-SECRET_KEY=your-secret-key-here
+SECRET_KEY=secret-key-here
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
 ```
