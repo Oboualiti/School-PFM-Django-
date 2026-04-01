@@ -2,41 +2,93 @@
 {% block body %}
 <div class="page-wrapper">
   <div class="content container-fluid">
+
     <div class="page-header">
       <div class="row">
-        <div class="col"><h3 class="page-title">Subject Proposals</h3></div>
+        <div class="col">
+          <h3 class="page-title">Subject Proposals</h3>
+        </div>
       </div>
     </div>
+
     <div class="mb-3">
       {% if user.is_authenticated and user.is_student %}
-      <a class="btn btn-primary" href="{% url 'add_proposal' %}">Propose Subject</a>
+        <a class="btn btn-primary" href="{% url 'add_proposal' %}">
+          Propose Subject
+        </a>
       {% endif %}
     </div>
+
     <div class="card">
       <div class="card-body">
+
         <table class="table">
-          <thead><tr><th>Name</th><th>Department</th><th>Status</th><th>Proposer</th><th>Actions</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Proposer</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
           <tbody>
             {% for p in proposals %}
             <tr>
+
               <td>{{ p.name }}</td>
               <td>{{ p.department.name }}</td>
-              <td>{{ p.status }}</td>
-              <td>{{ p.proposer.username }}</td>
+
+              <!-- ✅ STATUS BADGE -->
               <td>
-                {% if user.is_admin or user.is_teacher and p.status == 'pending' %}
-                <a class="btn btn-sm btn-success" href="{% url 'approve_proposal' p.id %}">Approve</a>
-                <a class="btn btn-sm btn-danger" href="{% url 'reject_proposal' p.id %}">Reject</a>
+                {% if p.status == "approved" %}
+                  <span class="badge badge-success">Approved</span>
+                {% elif p.status == "rejected" %}
+                  <span class="badge badge-danger">Rejected</span>
+                {% else %}
+                  <span class="badge badge-warning">Pending</span>
                 {% endif %}
               </td>
+
+              <td>{{ p.proposer.username }}</td>
+
+              <!-- ✅ ACTIONS -->
+              <td>
+                {% if (user.is_admin or user.is_teacher) and p.status == 'pending' %}
+
+                  <!-- APPROVE (POST safer) -->
+                  <form method="post" action="{% url 'approve_proposal' p.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-success">
+                      Approve
+                    </button>
+                  </form>
+
+                  <!-- REJECT -->
+                  <a class="btn btn-sm btn-danger"
+                     href="{% url 'reject_proposal' p.id %}">
+                     Reject
+                  </a>
+
+                {% else %}
+                  <span class="text-muted">No actions</span>
+                {% endif %}
+              </td>
+
             </tr>
             {% empty %}
-            <tr><td colspan="5">No proposals</td></tr>
+            <tr>
+              <td colspan="5">No proposals</td>
+            </tr>
             {% endfor %}
           </tbody>
+
         </table>
+
       </div>
     </div>
+
   </div>
 </div>
 {% endblock %}

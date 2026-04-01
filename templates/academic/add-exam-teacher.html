@@ -1,46 +1,58 @@
 {% extends 'Home/base.html' %}
 {% block body %}
+
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col">
-          <h3 class="page-title">Create Exam</h3>
-          <p class="text-muted">You can only create exams for subjects assigned to you.</p>
-        </div>
+
+    <h3>Create Exam</h3>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label>Exam Name</label>
+        <input type="text" name="name" class="form-control" required>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          <div class="form-group">
-            <label>Exam Name</label>
-            <input class="form-control" type="text" name="name" required>
-          </div>
-          <div class="form-group">
-            <label>Subject</label>
-            <select class="form-control" name="subject" required>
-              {% if subjects %}
-                {% for s in subjects %}
-                <option value="{{ s.id }}">{{ s.name }} ({{ s.department.name }})</option>
-                {% endfor %}
-              {% else %}
-                <option value="" disabled selected>No subjects assigned to you</option>
-              {% endif %}
-            </select>
-            {% if not subjects %}
-            <small class="text-danger">You need to be assigned subjects before creating exams. Contact administrator.</small>
-            {% endif %}
-          </div>
-          <div class="form-group">
-            <label>Date</label>
-            <input class="form-control" type="date" name="date" required>
-          </div>
-          <button class="btn btn-primary" type="submit" {% if not subjects %}disabled{% endif %}>Create Exam</button>
-        </form>
+
+      <div class="form-group">
+        <label>Subject</label>
+        <select name="subject" class="form-control" required>
+          {% for s in subjects %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+          {% endfor %}
+        </select>
       </div>
-    </div>
+
+      <!-- ✅ FIXED CLASS SELECT -->
+      <div class="form-group">
+        <label>Class</label>
+        <select name="class_group" class="form-control" required>
+          {% for c in classes %}
+            <option value="{{ c.id }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" name="date" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label>Start Time</label>
+        <input type="time" name="start_time" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label>End Time</label>
+        <input type="time" name="end_time" class="form-control" required>
+      </div>
+
+      <button class="btn btn-primary">Create</button>
+
+    </form>
+
   </div>
 </div>
+
 {% endblock %}

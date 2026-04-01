@@ -11,5 +11,6 @@ urlpatterns = [
     path('add-proposal/', views.add_proposal, name='add_proposal'),
     path('proposals/', views.proposal_list, name='proposal_list'),
     path('proposal/<int:proposal_id>/approve/', views.approve_proposal, name='approve_proposal'),
-     path('proposal/<int:proposal_id>/reject/', views.reject_proposal, name='reject_proposal'),
+    path('proposal/<int:proposal_id>/reject/', views.reject_proposal, name='reject_proposal'),
+    path('get-department-data/<int:dept_id>/', views.get_department_data, name='get_department_data'),
 ]

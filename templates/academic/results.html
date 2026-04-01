@@ -1,0 +1,242 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h3 class="page-title">Results List</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'results' %}">Results</a></li>
+            <li class="breadcrumb-item active">Results List</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    {% if user.is_student %}
+    <div class="row">
+      <div class="col-md-12 col-lg-4">
+        <div class="card dash-widget">
+          <div class="card-body">
+            <div class="dash-widget-header">
+              <span class="dash-widget-icon bg-primary">
+                <i class="fas fa-percentage"></i>
+              </span>
+              <div class="dash-count">
+                <h3>{{ stats.avg_mark|floatformat:2|default:"0.00" }} / 20</h3>
+              </div>
+            </div>
+            <div class="dash-widget-info">
+              <h6 class="text-muted">Average Mark</h6>
+              <div class="progress progress-sm">
+                {% widthratio stats.avg_mark 20 100 as avg_percent %}
+                <div class="progress-bar bg-primary" style="width: {{ avg_percent }}%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-lg-4">
+        <div class="card dash-widget">
+          <div class="card-body">
+            <div class="dash-widget-header">
+              <span class="dash-widget-icon bg-success">
+                <i class="fas fa-trophy"></i>
+              </span>
+              <div class="dash-count">
+                <h3>{{ stats.max_mark|default:"0" }}</h3>
+              </div>
+            </div>
+            <div class="dash-widget-info">
+              <h6 class="text-muted">Highest Mark</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-lg-4">
+        <div class="card dash-widget">
+          <div class="card-body">
+            <div class="dash-widget-header">
+              <span class="dash-widget-icon bg-info">
+                <i class="fas fa-clipboard-check"></i>
+              </span>
+              <div class="dash-count">
+                <h3>{{ stats.total_exams|default:"0" }}</h3>
+              </div>
+            </div>
+            <div class="dash-widget-info">
+              <h6 class="text-muted">Total Exams</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Performance Evolution</h5>
+          </div>
+          <div class="card-body">
+            <div id="progress-chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card filter-card">
+      <div class="card-body">
+        <form method="GET" action="{% url 'results' %}" id="filterForm">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Real-time Search</label>
+                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Type to search..." value="{{ search_query }}">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Subject</label>
+                <select name="subject" class="form-control select">
+                  <option value="">All Subjects</option>
+                  {% for s in subjects %}
+                  <option value="{{ s.id }}" {% if subject_filter == s.id|stringformat:"i" %}selected{% endif %}>{{ s.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Date From</label>
+                <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-filter"></i> Apply Filters</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card card-table">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover table-center mb-0 datatable" id="resultsTable">
+            <thead>
+              <tr>
+                {% if not user.is_student %}
+                <th>Student</th>
+                {% endif %}
+                <th>Exam</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Mark</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for g in grades %}
+              <tr>
+                {% if not user.is_student %}
+                <td>
+                  <h2 class="table-avatar">
+                    <a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="User Image"></a>
+                    <a href="#">{{ g.student.first_name }} {{ g.student.last_name }} <span>{{ g.student.student_id }}</span></a>
+                  </h2>
+                </td>
+                {% endif %}
+                <td>{{ g.exam.name }}</td>
+                <td>{{ g.exam.subject.name }}</td>
+                <td>{{ g.exam.date }}</td>
+                <td>
+                  <span class="badge badge-pill {% if g.mark >= 10 %}bg-success-light{% else %}bg-danger-light{% endif %}" style="font-size: 14px;">
+                    {{ g.mark }}
+                  </span>
+                </td>
+                <td>
+                  {% if g.mark >= 10 %}
+                  <span class="badge badge-success">Passed</span>
+                  {% else %}
+                  <span class="badge badge-danger">Failed</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
+
+{% if user.is_student %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var options = {
+      series: [{
+        name: 'Mark',
+        data: {{ chart_values|safe }}
+      }],
+      chart: {
+        height: 350,
+        type: 'area',
+        toolbar: {
+          show: false
+        }
+      },
+      colors: ['#18aefa'],
+      dataLabels: {
+        enabled: true
+      },
+      stroke: {
+        curve: 'smooth'
+      },
+      xaxis: {
+        categories: {{ chart_labels|safe }},
+      },
+      yaxis: {
+        min: 0,
+        max: 20
+      },
+      tooltip: {
+        x: {
+          format: 'dd/MM/yy'
+        },
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#progress-chart"), options);
+    chart.render();
+  });
+</script>
+{% endif %}
+
+<script>
+  $(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      $("#resultsTable tbody tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>
+
+{% endblock %}

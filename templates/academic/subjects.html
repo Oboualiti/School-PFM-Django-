@@ -1,34 +1,82 @@
 {% extends 'Home/base.html' %}
+
 {% block body %}
 <div class="page-wrapper">
   <div class="content container-fluid">
+    
     <div class="page-header">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col">
-          <h3 class="page-title">Subjects</h3>
+          <h3 class="page-title">Subjects List</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'subject_list' %}">Subjects</a></li>
+            <li class="breadcrumb-item active">Subjects List</li>
+          </ul>
         </div>
       </div>
     </div>
+
     <div class="card">
       <div class="card-body">
+
+        <!-- Filtering -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <form method="GET">
+                    <select name="department" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Departments</option>
+                        {% for d in departments %}
+                        <option value="{{ d.id }}" {% if selected_dept == d.id|stringformat:"i" %}selected{% endif %}>
+                            {{ d.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+
         <table class="table">
           <thead>
-            <tr><th>Name</th><th>Department</th><th>Teacher</th></tr>
-          </thead>
-          <tbody>
-            {% for s in subjects %}
             <tr>
-              <td>{{ s.name }}</td>
-              <td>{{ s.department.name }}</td>
-              <td>{{ s.teacher }}</td>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Teacher</th>
+              <th>Actions</th>
             </tr>
-            {% empty %}
-            <tr><td colspan="3">No subjects</td></tr>
-            {% endfor %}
-          </tbody>
+          </thead>
+
+        <tbody>
+  {% for s in subjects %}
+  <tr>
+    <td>{{ s.name }}</td>
+    <td>{{ s.department.name }}</td>
+    <td>{{ s.teacher }}</td>
+
+    <td>
+      <a href="{% url 'edit_subject' s.id %}"
+         class="btn btn-sm btn-primary {% if not request.user.is_admin %}disabled{% endif %}">
+        Edit
+      </a>
+
+      <a href="{% url 'delete_subject' s.id %}"
+         class="btn btn-sm btn-danger {% if not request.user.is_admin %}disabled{% endif %}">
+        Delete
+      </a>
+    </td>
+  </tr>
+
+  {% empty %}
+  <tr>
+    <td colspan="4">No subjects</td>
+  </tr>
+  {% endfor %}
+</tbody>
         </table>
+
       </div>
     </div>
+
   </div>
 </div>
 {% endblock %}

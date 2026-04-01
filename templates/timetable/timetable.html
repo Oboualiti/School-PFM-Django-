@@ -5,8 +5,11 @@
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col">
-          <h3 class="page-title">Emploi du temps (Time Table)</h3>
-          <p class="text-muted">Visualisation hebdomadaire des cours et salles de classe</p>
+          <h3 class="page-title">Time Table</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Time Table</li>
+          </ul>
         </div>
         <div class="col-auto">
           <a href="{% url 'visual_tool' %}" class="btn btn-primary">
@@ -16,7 +19,7 @@
       </div>
     </div>
 
-    <!-- Responsive Timetable Grid -->
+    <!-- GRID VIEW -->
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">Semaine Scolaire</h5>
@@ -32,10 +35,20 @@
                 <div class="card-body p-2">
                   <div class="slot-subject fw-bold">{{ slot.subject.name }}</div>
                   <div class="slot-teacher text-muted small">{{ slot.teacher }}</div>
+
                   <div class="slot-time small">
                     {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
                   </div>
-                  <div class="slot-room badge bg-secondary">{{ slot.classroom }}</div>
+
+                  <!-- ✅ NEW CLASS DISPLAY -->
+                  <div class="small mt-1">
+                    <span class="badge bg-primary">{{ slot.student_class }}</span>
+                    <span class="badge bg-info">{{ slot.section }}</span>
+                  </div>
+
+                  <div class="slot-room badge bg-secondary mt-1">
+                    {{ slot.classroom }}
+                  </div>
                 </div>
               </div>
               {% empty %}
@@ -50,7 +63,7 @@
       </div>
     </div>
 
-    <!-- Traditional Table View (Fallback) -->
+    <!-- TABLE VIEW -->
     <div class="card mt-4 d-none d-lg-block">
       <div class="card-header">
         <h5 class="card-title mb-0">Vue Tableau Détaillée</h5>
@@ -60,7 +73,14 @@
           <table class="table table-hover mb-0">
             <thead class="table-light">
               <tr>
-                <th>Jour</th><th>Matière</th><th>Enseignant</th><th>Début</th><th>Fin</th><th>Salle</th>
+                <th>Jour</th>
+                <th>Matière</th>
+                <th>Enseignant</th>
+                <th>Début</th>
+                <th>Fin</th>
+                <th>Classe</th>
+                <th>Section</th>
+                <th>Salle</th>
               </tr>
             </thead>
             <tbody>
@@ -72,7 +92,18 @@
                   <td>{{ slot.teacher }}</td>
                   <td>{{ slot.start_time|time:"H:i" }}</td>
                   <td>{{ slot.end_time|time:"H:i" }}</td>
-                  <td><span class="badge bg-secondary">{{ slot.classroom }}</span></td>
+
+                  <!-- ✅ NEW -->
+                  <td>
+                    <span class="badge bg-primary">{{ slot.student_class }}</span>
+                  </td>
+                  <td>
+                    <span class="badge bg-info">{{ slot.section }}</span>
+                  </td>
+
+                  <td>
+                    <span class="badge bg-secondary">{{ slot.classroom }}</span>
+                  </td>
                 </tr>
                 {% endfor %}
               {% endfor %}
@@ -89,7 +120,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .timetable-day {
@@ -115,47 +145,10 @@
   gap: 0.5rem;
 }
 
-.time-slot.card {
-  border: 1px solid #dee2e6;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
 .time-slot.card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-.slot-subject {
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
-}
-
-.slot-teacher {
-  font-size: 0.8rem;
-}
-
-.slot-time {
-  font-size: 0.8rem;
-  color: #6c757d;
-}
-
-.slot-room {
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-}
-
-@media (max-width: 768px) {
-  .timetable-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .timetable-day {
-    padding: 0.5rem;
-  }
-  
-  .time-slot.card .card-body {
-    padding: 0.5rem;
-  }
-}
 </style>
+
 {% endblock %}
