@@ -7,10 +7,11 @@
                <div class="page-header">
                   <div class="row align-items-center">
                      <div class="col">
-                        <h3 class="page-title">Students</h3>
+                        <h3 class="page-title">Students List</h3>
                         <ul class="breadcrumb">
-                           <li class="breadcrumb-item"><a href="">Dashboard</a></li>
-                           <li class="breadcrumb-item active">Students</li>
+                           <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                           <li class="breadcrumb-item"><a href="{% url 'student_list' %}">Students</a></li>
+                           <li class="breadcrumb-item active">Students List</li>
                         </ul>
                      </div>
                      {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
@@ -25,12 +26,30 @@
                   <div class="col-sm-12">
                      <div class="card card-table">
                         <div class="card-body">
+                           <div class="filter-form mb-4">
+                              <form method="GET" action="{% url 'student_list' %}" class="row align-items-center">
+                                 <div class="col-md-3">
+                                    <div class="form-group mb-0">
+                                       <select name="student_class" class="form-control" onchange="this.form.submit()">
+                                          <option value="">All Classes</option>
+                                          {% for c in classes %}
+                                          <option value="{{ c.id }}" {% if class_filter == c.id|stringformat:"i" %}selected{% endif %}>{{ c }}</option>
+                                          {% endfor %}
+                                       </select>
+                                    </div>
+                                 </div>
+                                 <div class="col-md-2">
+                                    <a href="{% url 'student_list' %}" class="btn btn-secondary btn-sm">Reset</a>
+                                 </div>
+                              </form>
+                           </div>
                            <div class="table-responsive">
                               <table class="table table-hover table-center mb-0 datatable">
                                  <thead>
                                     <tr>
                                        <th>ID</th>
                                        <th>Name</th>
+                                       <th>Class</th>
                                        <th>Email</th>
                                        {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
                                        <th class="text-right">Action</th>
@@ -43,10 +62,10 @@
                                        <td>{{ student.student_id}}</td>
                                        <td>
                                           <h2 class="table-avatar">
-                                             {% comment %} <a href="{% url 'view_student' student.student_id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{ student.student_image ? student.student_image.url : '' }}" alt="User Image"></a> {% endcomment %}
-                                             <a href="{% url 'view_student' student.student_id %}">{{ student.first_name }} {{ student.last_name}}</a>
+                                             <a href="{% url 'view_student' student.student_id %}">{{ student.get_full_name }}</a>
                                           </h2>
                                        </td>
+                                       <td>{{ student.student_class }}</td>
                                        <td>{{ student.user.email }}</td>
                                        {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
                                        <td class="text-right">
@@ -85,7 +104,6 @@
       <script src="{%static 'assets/plugins/datatables/datatables.min.js' %}"></script>
       <script src="{%static 'assets/js/script.js' %}"></script>
    </body>
-   <!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:49 GMT -->
 </html>
 
 

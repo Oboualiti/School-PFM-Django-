@@ -1,0 +1,37 @@
+{% extends 'Home/base.html' %}
+
+{% block body %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+
+    <h3 class="page-title">My Results</h3>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Exam</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Mark</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for g in grades %}
+        <tr>
+          <td>{{ g.exam.name }}</td>
+          <td>{{ g.exam.subject.name }}</td>
+          <td>{{ g.exam.date }}</td>
+          <td>{{ g.mark }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">No results yet</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+</div>
+{% endblock %}

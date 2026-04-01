@@ -95,32 +95,32 @@
                      <li class="menu-title">
                         <span>Main Menu</span>
                      </li>
-                     <li class="submenu active">
+                     <li class="submenu {% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
                         <a href="#"><i class="fas fa-user-graduate"></i> <span> Dashboard</span> <span class="menu-arrow"></span></a>
                         <ul>
                            {% if user.is_authenticated and user.is_admin %}
-                           <li><a href="{% url 'dashboard' %}" class="active">Admin Dashboard</a></li>
+                           <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Admin Dashboard</a></li>
                            {% elif user.is_authenticated and user.is_teacher %}
-                           <li><a href="{% url 'dashboard' %}">Teacher Dashboard</a></li>
+                           <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Teacher Dashboard</a></li>
                            {% elif user.is_authenticated and user.is_student %}
-                           <li><a href="{% url 'student_dashboard' %}">Student Dashboard</a></li>
+                           <li><a href="{% url 'student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">Student Dashboard</a></li>
                            {% else %}
-                           <li><a href="{% url 'index' %}">Dashboard</a></li>
+                           <li><a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Dashboard</a></li>
                            {% endif %}
                         </ul>
                      </li>
-                     <li class="submenu">
+                     <li class="submenu {% if 'student' in request.path %}active{% endif %}">
                         <a href="#"><i class="fas fa-user-graduate"></i> <span> Students</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="{% url 'student_list' %}">Student List</a></li>
+                           <li><a href="{% url 'student_list' %}" class="{% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">Student List</a></li>
                            {% if user.is_authenticated and user.is_student %}
-                           <li><a href="{% url 'my_profile' student_id=user.student.student_id %}">My Profile</a></li>
+                           <li><a href="{% url 'my_profile' student_id=user.student.student_id %}" class="{% if request.resolver_match.url_name == 'my_profile' %}active{% endif %}">My Profile</a></li>
                            {% elif user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
-                           <li><a href="{% url 'add_student' %}">Student Add</a></li>
+                           <li><a href="{% url 'add_student' %}" class="{% if request.resolver_match.url_name == 'add_student' %}active{% endif %}">Student Add</a></li>
                            {% endif %}
                         </ul>
                      </li>
-                     <li class="submenu">
+                     <li class="submenu {% if 'teacher' in request.path %}active{% endif %}">
                         <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span class="menu-arrow"></span></a>
                         <ul>
                            <li><a href="{% url 'teacher_list' %}">Teacher List</a></li>
@@ -128,81 +128,57 @@
                            <li><a href="{% url 'teacher_profile' user.teacher_profile.id %}">My Profile</a></li>
                            {% endif %}
                            {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
-                           <li><a href="{% url 'add_teacher' %}">Teacher Add</a></li>
+                           <li><a href="{% url 'add_teacher' %}" class="{% if request.resolver_match.url_name == 'add_teacher' %}active{% endif %}">Teacher Add</a></li>
                            {% endif %}
                         </ul>
                      </li>
-                     <li class="submenu">
+                     <li class="submenu {% if 'department' in request.path %}active{% endif %}">
                         <a href="#"><i class="fas fa-building"></i> <span> Departments</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="{% url 'department_list' %}">Department List</a></li>
+                           <li><a href="{% url 'department_list' %}" class="{% if request.resolver_match.url_name == 'department_list' %}active{% endif %}">Department List</a></li>
                            {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
-                           <li><a href="{% url 'add_department' %}">Department Add</a></li>
+                           <li><a href="{% url 'add_department' %}" class="{% if request.resolver_match.url_name == 'add_department' %}active{% endif %}">Department Add</a></li>
                            {% endif %}
                         </ul>
                      </li>
-                     <li class="submenu">
+                     <li class="submenu {% if 'subject' in request.path %}active{% endif %}">
                         <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="{% url 'subject_list' %}">Subject List</a></li>
-                           {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
-                           <li><a href="{% url 'add_subject' %}">Subject Add</a></li>
-                           <li><a href="#">Subject Edit</a></li>
-                           {% endif %}
-                           {% if user.is_authenticated and user.is_student %}
-                           <li><a href="{% url 'proposal_list' %}">My Proposals</a></li>
-                           <li><a href="{% url 'add_proposal' %}">Propose Subject</a></li>
-                           {% endif %}
-                           {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
-                           <li><a href="{% url 'proposal_list' %}">Review Proposals</a></li>
+                           <li><a href="{% url 'subject_list' %}" class="{% if request.resolver_match.url_name == 'subject_list' %}active{% endif %}">Subject List</a></li>
+                           {% if user.is_authenticated and user.is_admin %}
+                           <li><a href="{% url 'add_subject' %}" class="{% if request.resolver_match.url_name == 'add_subject' %}active{% endif %}">Subject Add</a></li>
                            {% endif %}
                         </ul>
                      </li>
                      <li class="menu-title">
                         <span>Management</span>
                      </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="fees-collections.html">Fees Collection</a></li>
-                           <li><a href="expenses.html">Expenses</a></li>
-                           <li><a href="salary.html">Salary</a></li>
-                           <li><a href="add-fees-collection.html">Add Fees</a></li>
-                           <li><a href="add-expenses.html">Add Expenses</a></li>
-                           <li><a href="add-salary.html">Add Salary</a></li>
-                        </ul>
-                     </li>
-                     <li>
+                     <li class="{% if request.resolver_match.url_name == 'holiday_list' %}active{% endif %}">
                         <a href="{% url 'holiday_list' %}"><i class="fas fa-holly-berry"></i> <span>Holiday</span></a>
                      </li>
-                     <li>
-                        <a href="fees.html"><i class="fas fa-comment-dollar"></i> <span>Fees</span></a>
-                     </li>
-                     <li>
+                     <li class="{% if request.resolver_match.url_name == 'exam_list' %}active{% endif %}">
                         <a href="{% url 'exam_list' %}"><i class="fas fa-clipboard-list"></i> <span>Exam list</span></a>
                      </li>
-                     <li>
-                        <a href="event.html"><i class="fas fa-calendar-day"></i> <span>Events</span></a>
+                     <li class="{% if request.resolver_match.url_name == 'results' %}active{% endif %}">
+                        <a href="{% url 'results' %}"><i class="fas fa-chart-bar"></i> <span>Results</span></a>
                      </li>
- <li>
-    <a href="{% url 'timetable_list' %}">
-        <i class="fas fa-calendar"></i> <span>View Timetable</span>
-    </a>
-</li>
-
-{% if user.is_authenticated and user.is_admin %}
-<li>
-    <a href="{% url 'add_timetable' %}">
-        <i class="fas fa-plus-circle"></i> <span>Add Timetable</span>
-    </a>
-</li>
-
-<li>
-    <a href="{% url 'proposal_list' %}">
-        <i class="fas fa-tasks"></i> <span>Review Proposals</span>
-    </a>
-</li>
-{% endif %}
+                     <li class="{% if request.resolver_match.url_name == 'timetable_list' %}active{% endif %}">
+                        <a href="{% url 'timetable_list' %}">
+                            <i class="fas fa-calendar"></i> <span>View Timetable</span>
+                        </a>
+                    </li>
+                    {% if user.is_authenticated and user.is_admin %}
+                    <li class="{% if request.resolver_match.url_name == 'add_timetable' %}active{% endif %}">
+                        <a href="{% url 'add_timetable' %}">
+                            <i class="fas fa-plus-circle"></i> <span>Add Timetable</span>
+                        </a>
+                    </li>
+                    <li class="{% if request.resolver_match.url_name == 'proposal_list' %}active{% endif %}">
+                        <a href="{% url 'proposal_list' %}">
+                            <i class="fas fa-tasks"></i> <span>Review Proposals</span>
+                        </a>
+                    </li>
+                    {% endif %}
 
 {% if user.is_authenticated and user.is_teacher %}
 <li>

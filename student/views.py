@@ -4,36 +4,48 @@ from django.contrib import messages
 from .models import Student, Parent
 from home_auth.decorators import admin_required
 from django.contrib.auth.decorators import login_required
-import csv
+import csv 
+from academic.models import Class
 
 
 
 @login_required
 def student_list(request):
-    students = Student.objects.all()
-    return render(request, 'students/students.html', {'students': students})
+    class_filter = request.GET.get('student_class', '')
+    
+    students = Student.objects.all().select_related('student_class', 'user')
+    
+    if class_filter:
+        students = students.filter(student_class_id=class_filter)
+        
+    classes = Class.objects.all()
+    
+    return render(request, 'students/students.html', {
+        'students': students,
+        'classes': classes,
+        'class_filter': class_filter
+    })
 
 
 
 
 @admin_required 
 def add_student(request):
+    classes = Class.objects.all()
     if request.method == 'POST':
-
-        # Récupérer les données de l'étudiant
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
        
         gender = request.POST.get('gender')
         date_of_birth = request.POST.get('date_of_birth')
-        student_class = request.POST.get('student_class')
+        class_id = request.POST.get('student_class')
+        student_class = Class.objects.get(id=class_id)
         joining_date = request.POST.get('joining_date')
         mobile_number = request.POST.get('mobile_number')
         admission_number = request.POST.get('admission_number')
         section = request.POST.get('section')
         student_image = request.FILES.get('student_image')
 
-        # Récupérer les données du parent
         father_name = request.POST.get('father_name')
         father_occupation = request.POST.get('father_occupation')
         father_mobile = request.POST.get('father_mobile')
@@ -61,10 +73,12 @@ def add_student(request):
 
         # Create student
         student = Student.objects.create(
-            user=request.user,
             first_name=first_name,
             last_name=last_name,
+<<<<<<< HEAD
             
+=======
+>>>>>>> 3142b4f6a0cf57fd03b623c25b985401f45d7089
             gender=gender,
             date_of_birth=date_of_birth,
             student_class=student_class,
@@ -79,7 +93,9 @@ def add_student(request):
         messages.success(request, 'Student added Successfully')
         return redirect('student_list')
 
-    return render(request, 'students/add-student.html')
+    return render(request, 'students/add-student.html',{
+        "classes": classes
+    })
 
 @login_required
 def edit_student(request, student_id):
@@ -88,13 +104,13 @@ def edit_student(request, student_id):
     if request.user.is_student and student.user_id != request.user.id:
         return HttpResponseForbidden()
     if request.method == 'POST':
-        # Update student fields
         student.first_name = request.POST.get('first_name')
         student.last_name = request.POST.get('last_name')
         student.student_id = request.POST.get('student_id')
         student.gender = request.POST.get('gender')
         student.date_of_birth = request.POST.get('date_of_birth')
-        student.student_class = request.POST.get('student_class')
+        class_id = request.POST.get('student_class')
+        student.student_class = Class.objects.get(id=class_id)
         student.joining_date = request.POST.get('joining_date')
         student.mobile_number = request.POST.get('mobile_number')
         student.admission_number = request.POST.get('admission_number')
@@ -158,7 +174,7 @@ def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     user = student.user 
     student.delete()
-    user.delete()  # Delete the associated user
+    user.delete()  
     return redirect('student_list')
 
 @login_required

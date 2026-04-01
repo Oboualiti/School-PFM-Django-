@@ -103,8 +103,8 @@
 
                             <div class="form-group">
                                 <label>Department</label>
-                                <select name="department" class="form-control">
-                                    <option value="">Select Department</option>
+                                <select name="department" class="form-control" required>
+                                    <option value="" disabled selected>Select Department</option>
                                     {% for dept in departments %}
                                         <option value="{{ dept.id }}" {% if teacher.department.id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
                                     {% endfor %}

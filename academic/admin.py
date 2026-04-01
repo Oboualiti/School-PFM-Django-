@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Department, Subject, Exam, Grade, Holiday, SubjectProposal
-
+from .models import Class, Department, Subject, Exam, Grade, Holiday, SubjectProposal
+admin.site.register(Class)
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'head_of_dept')
@@ -30,10 +30,4 @@ class HolidayAdmin(admin.ModelAdmin):
     list_display = ('name', 'holiday_date', 'type')
     list_filter = ('type', 'holiday_date')
     search_fields = ('name',)
-
-@admin.register(SubjectProposal)
-class SubjectProposalAdmin(admin.ModelAdmin):
-    list_display = ('name', 'department', 'proposer', 'status', 'created_at')
-    list_filter = ('status', 'department', 'created_at')
-    search_fields = ('name', 'proposer__email')
 

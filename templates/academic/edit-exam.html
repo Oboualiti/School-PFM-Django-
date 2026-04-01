@@ -5,11 +5,11 @@
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col">
-          <h3 class="page-title">Add Exam</h3>
+          <h3 class="page-title">Edit Exam</h3>
           <ul class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{% url 'exam_list' %}">Exams</a></li>
-            <li class="breadcrumb-item active">Add Exam</li>
+            <li class="breadcrumb-item active">Edit Exam</li>
           </ul>
         </div>
       </div>
@@ -20,13 +20,13 @@
           {% csrf_token %}
           <div class="form-group">
             <label>Name</label>
-            <input class="form-control" type="text" name="name" required>
+            <input class="form-control" type="text" name="name" value="{{ exam.name }}" required>
           </div>
           <div class="form-group">
             <label>Subject</label>
             <select class="form-control" name="subject" required>
               {% for s in subjects %}
-              <option value="{{ s.id }}">{{ s.name }}</option>
+              <option value="{{ s.id }}" {% if s.id == exam.subject.id %}selected{% endif %}>{{ s.name }}</option>
               {% endfor %}
             </select>
           </div>
@@ -34,23 +34,24 @@
             <label>Class</label>
             <select class="form-control" name="class_group" required>
               {% for c in classes %}
-              <option value="{{ c.id }}">{{ c }}</option>
+              <option value="{{ c.id }}" {% if c.id == exam.class_group.id %}selected{% endif %}>{{ c }}</option>
               {% endfor %}
             </select>
           </div>
           <div class="form-group">
             <label>Date</label>
-            <input class="form-control" type="date" name="date" required>
+            <input class="form-control" type="date" name="date" value="{{ exam.date|date:'Y-m-d' }}" required>
           </div>
           <div class="form-group">
             <label>Start Time</label>
-            <input class="form-control" type="time" name="start_time" required>
+            <input class="form-control" type="time" name="start_time" value="{{ exam.start_datetime|date:'H:i' }}" required>
           </div>
           <div class="form-group">
             <label>End Time</label>
-            <input class="form-control" type="time" name="end_time" required>
+            <input class="form-control" type="time" name="end_time" value="{{ exam.end_datetime|date:'H:i' }}" required>
           </div>
-          <button class="btn btn-primary" type="submit">Save</button>
+          <button class="btn btn-primary" type="submit">Update</button>
+          <a href="{% url 'exam_list' %}" class="btn btn-secondary">Cancel</a>
         </form>
       </div>
     </div>
