@@ -96,6 +96,7 @@ def add_student(request):
 
 @login_required
 def edit_student(request, student_id):
+    
     student = get_object_or_404(Student, student_id=student_id)
     parent = student.parent
     if request.user.is_student and student.user_id != request.user.id:
