@@ -75,10 +75,7 @@ def add_student(request):
         student = Student.objects.create(
             first_name=first_name,
             last_name=last_name,
-<<<<<<< HEAD
             
-=======
->>>>>>> 3142b4f6a0cf57fd03b623c25b985401f45d7089
             gender=gender,
             date_of_birth=date_of_birth,
             student_class=student_class,
