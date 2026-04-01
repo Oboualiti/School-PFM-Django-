@@ -70,7 +70,7 @@ PreSkool est une plateforme web centralisée qui digitalise l'ensemble des opér
 
 ```bash
 # 1. Cloner le dépôt
-git clone https://github.com/ton-username/preskool.git
+git clone https://github.com/Oboualiti/School-PFM-Django-.git 
 cd preskool
 
 # 2. Créer et activer un environnement virtuel
