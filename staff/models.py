@@ -9,7 +9,7 @@ class Teacher(models.Model):
         on_delete=models.CASCADE,
         related_name='teacher_profile'
     )
-
+   
     # Teacher info 
     gender = models.CharField(
         max_length=10,
@@ -52,6 +52,8 @@ class Teacher(models.Model):
         null=True,
         blank=True
     )
+    
+
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"

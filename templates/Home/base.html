@@ -124,6 +124,9 @@
                         <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span class="menu-arrow"></span></a>
                         <ul>
                            <li><a href="{% url 'teacher_list' %}">Teacher List</a></li>
+                           {% if user.is_authenticated and user.is_teacher %}
+                           <li><a href="{% url 'teacher_profile' user.teacher_profile.id %}">My Profile</a></li>
+                           {% endif %}
                            {% if user.is_authenticated and user.is_admin or user.is_authenticated and user.is_teacher %}
                            <li><a href="{% url 'add_teacher' %}">Teacher Add</a></li>
                            {% endif %}

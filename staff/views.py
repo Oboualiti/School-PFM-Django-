@@ -117,3 +117,15 @@ def delete_teacher(request, teacher_id):
     messages.success(request, 'Teacher deleted successfully')
     return redirect('teacher_list')
 
+
+
+@login_required
+def teacher_profile(request, teacher_id):
+    # This matches the 'teacher_id' field in your model, not the database 'id'
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+   
+
+    context = {
+        "teacher": teacher
+    }
+    return render(request, 'staff/teacherprofile.html', context)

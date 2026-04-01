@@ -64,7 +64,7 @@ def add_student(request):
             user=request.user,
             first_name=first_name,
             last_name=last_name,
-            student_id=student_id,
+            
             gender=gender,
             date_of_birth=date_of_birth,
             student_class=student_class,

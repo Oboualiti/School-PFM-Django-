@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from staff.models import Teacher
 
 
 # Create your views here.
@@ -13,3 +13,5 @@ def dashboard(request):
 
 def ui_test(request):
     return render(request, 'tests/ui_smoke.html')
+
+

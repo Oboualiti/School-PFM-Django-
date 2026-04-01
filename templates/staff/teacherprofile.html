@@ -1,0 +1,102 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-wrapper">
+
+    <div class="content container-fluid">
+
+        <div class="page-header">
+
+            <div class="row align-items-center">
+
+                <div class="col">
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Teacher Profile</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="profile-header">
+                <div class="row align-items-center">
+                    <div class="col-auto profile-image">
+                        <a href="#">
+                            <img class="rounded-circle" alt="User Image" src=  'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/no-profile-picture-icon.png' >
+                        </a>
+                    </div>
+                    <div class="col ml-md-n2 profile-user-info">
+                        <h4 class="user-name mb-0">{{ teacher.user.first_name }} {{ teacher.user.last_name }}</h4>
+                        <h6 class="text-muted">{{ teacher.qualification|default:"Education Professional" }}</h6>
+                        <div class="user-Location"><i class="fas fa-map-marker-alt"></i> {{ teacher.address|default:"No address set" }}</div>
+                    </div>
+                   
+                </div>
+            </div>
+
+            <div class="profile-menu">
+                <ul class="nav nav-tabs nav-tabs-solid">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#per_details_tab">About Me</a>
+                    </li>
+                    
+                </ul>
+            </div>
+
+            <div class="tab-content profile-tab-cont">
+                <div class="tab-pane fade show active" id="per_details_tab">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title d-flex justify-content-between">
+                                        <span>Personal Details</span>
+                                    </h5>
+                                    <div class="row">
+                                        <p class="col-sm-3 text-muted text-sm-right mb-0 mb-sm-3">Name</p>
+                                        <p class="col-sm-9">{{ teacher.user.first_name }} {{ teacher.user.last_name }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-3 text-muted text-sm-right mb-0 mb-sm-3">Email ID</p>
+                                        <p class="col-sm-9">{{ teacher.user.email }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-3 text-muted text-sm-right mb-0 mb-sm-3">Mobile</p>
+                                        <p class="col-sm-9">{{ teacher.mobile_number|default:"Not provided" }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-3 text-muted text-sm-right mb-0 mb-sm-3">Department</p>
+                                        <p class="col-sm-9">{{ teacher.department.department_name|default:"Not assigned" }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-3 text-muted text-sm-right mb-0">Joining Date</p>
+                                        <p class="col-sm-9 mb-0">{{ teacher.joining_date }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Experience</h5>
+                                    <p>{{ teacher.experience|default:"0" }} Years of Teaching</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>
+</div>
+<div style="margin-bottom: 300px;"></div>
+</div>
+{% endblock %}

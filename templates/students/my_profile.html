@@ -8,32 +8,137 @@
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col">
-                    <h3 class="page-title">My Profile</h3>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">My Profile</li>
-                    </ul>
-<h1>Student Profile</h1>
+                 
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Student Profile</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">My Profile</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="profile-header">
+                <div class="row align-items-center">
+                    <div class="col-auto profile-image">
+                        <a href="#">
+                            {% if student.student_image %}
+                                <img class="rounded-circle" alt="User Image" src="{{ student.student_image.url }}">
+                            {% else %}
+                                <img class="rounded-circle" alt="User Image" src="{% static 'assets/img/profiles/avatar-01.jpg' %}">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="col ml-md-n2 profile-user-info">
+                        <h4 class="user-name mb-0">{{ student.user.first_name }} {{ student.user.last_name }}</h4>
+                        <h6 class="text-muted">Student ID: {{ student.student_id }}</h6>
+                        <div class="user-Location"><i class="fas fa-university"></i> {{ student.student_class|default:"Class Not Assigned" }} | Section: {{ student.section|default:"-" }}</div>
+                    </div>
+                   
+                </div>
+            </div>
 
-<h3>Student Information</h3>
+            <div class="profile-menu">
+                <ul class="nav nav-tabs nav-tabs-solid">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#personal_info">Personal Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#parent_info">Parent Information</a>
+                    </li>
+                </ul>
+            </div>
 
-<p><b>First Name:</b> {{ student.user.first_name }}</p>
-<p><b>Last Name:</b> {{ student.user.last_name }}</p>
-<p><b>Email:</b> {{ student.user.email }}</p>
-<p><b>Student ID:</b> {{ student.student_id }}</p>
+            <div class="tab-content profile-tab-cont">
+                <div class="tab-pane fade show active" id="personal_info">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Student Details</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row mb-3">
+                                        <p class="col-sm-4 text-muted mb-0">Full Name</p>
+                                        <p class="col-sm-8 text-dark font-weight-bold">{{ student.user.first_name }} {{ student.user.last_name }}</p>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <p class="col-sm-4 text-muted mb-0">Email</p>
+                                        <p class="col-sm-8">{{ student.user.email }}</p>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <p class="col-sm-4 text-muted mb-0">Gender</p>
+                                        <p class="col-sm-8">{{ student.gender }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row mb-3">
+                                        <p class="col-sm-4 text-muted mb-0">Date of Birth</p>
+                                        <p class="col-sm-8">{{ student.date_of_birth }}</p>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <p class="col-sm-4 text-muted mb-0">Admission No</p>
+                                        <p class="col-sm-8">{{ student.admission_number }}</p>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <p class="col-sm-4 text-muted mb-0">Joining Date</p>
+                                        <p class="col-sm-8">{{ student.joining_date }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-{% if student.student_image %}
-<img src="{{ student.student_image.url }}" width="120">
-{% endif %}
-
-<hr>
-
-<h3>Parent Information</h3>
-
-<p><b>Father Name:</b> {{ student.parent.father_name }}</p>
-<p><b>Mother Name:</b> {{ student.parent.mother_name }}</p>
-<p><b>Father Phone:</b> {{ student.parent.father_mobile }}</p>
-<p><b>Mother Phone:</b> {{ student.parent.mother_mobile }}</p>
+                <div class="tab-pane fade" id="parent_info">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-user-tie"></i> Father's Details</h5>
+                                    <div class="row mt-3">
+                                        <p class="col-sm-4 text-muted mb-2">Name</p>
+                                        <p class="col-sm-8">{{ student.parent.father_name }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-4 text-muted mb-2">Phone</p>
+                                        <p class="col-sm-8">{{ student.parent.father_mobile }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-4 text-muted mb-2">Occupation</p>
+                                        <p class="col-sm-8">{{ student.parent.father_occupation }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-female"></i> Mother's Details</h5>
+                                    <div class="row mt-3">
+                                        <p class="col-sm-4 text-muted mb-2">Name</p>
+                                        <p class="col-sm-8">{{ student.parent.mother_name }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-4 text-muted mb-2">Phone</p>
+                                        <p class="col-sm-8">{{ student.parent.mother_mobile }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-sm-4 text-muted mb-2">Occupation</p>
+                                        <p class="col-sm-8">{{ student.parent.mother_occupation }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div>
 {% endblock %}
