@@ -1,6 +1,6 @@
 # 🎓 PreSkool — Système de Gestion Scolaire
 
-Lien de video : video 
+Lien de video : [video](https://drive.google.com/file/d/1RjykxcTGbKgnlnk74PAi2048wyS8HqDD/view?usp=sharing) 
 
 > Application web complète de gestion scolaire développée avec **Django (Python)**  
 > Projet de Fin de Module · Développement Web Avancé Back-end · FSTG 2025–2026
